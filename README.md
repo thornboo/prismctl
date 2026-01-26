@@ -6,7 +6,7 @@
 
 Unified CLI for managing AI coding tools: **Codex**, **Claude Code**, and **Gemini CLI**.
 
-[中文文档](README.zh-CN.md)
+Docs: [English](docs/en/README.md) | [Chinese (Simplified)](docs/zh-CN/README.md)
 
 ## Features
 
