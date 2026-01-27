@@ -143,6 +143,15 @@ target/
 **/target/
 **/*.rs.bk
 
+# mdBook build output
+book-output/
+
+# Legacy mdBook output (pre-migration); safe to delete
+book/
+
+# Legacy mdBook shared assets directory created by older configs; safe to delete
+/_shared/
+
 # IDE / tooling
 .idea/
 .vscode/
