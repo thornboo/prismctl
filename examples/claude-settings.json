@@ -1,0 +1,9 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "REPLACE_ME",
+    "ANTHROPIC_BASE_URL": "https://api.example.com/v1",
+    "ANTHROPIC_MODEL": "claude-sonnet-4"
+  },
+  "outputStyle": "ekko-engineer-professional"
+}
+

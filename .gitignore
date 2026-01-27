@@ -166,6 +166,3 @@ Thumbs.db
 *.swp
 *.swo
 *~
-
-# Local task runner docs
-DEVELOPMENT.md
