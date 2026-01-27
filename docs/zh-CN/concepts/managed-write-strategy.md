@@ -5,12 +5,13 @@ Ekko 为了“尽量不破坏用户已有配置”，将写入分为三种策略
 
 ## 1) 命名空间文件（默认）
 
-只在工具配置目录下写入 `ekko/` 命名空间文件，由 Ekko 完全管理，可安全覆盖更新。
+只在工具配置目录下写入 `ekko/` 命名空间文件，由 Ekko 完全管理，可安全覆盖更新（`init`/`update` 都会覆盖这些文件）。
 
 示例：
 
 - Codex：`~/.codex/prompts/ekko/*`
-- Claude Code：`~/.claude/commands/ekko/*`、`~/.claude/agents/ekko/*`
+- Claude Code：`~/.claude/commands/ekko/*`、`~/.claude/agents/ekko/*`、`~/.claude/output-styles/*`（Ekko 内置的 output styles）
+- Gemini CLI：`~/.gemini/ekko/WORKFLOWS.md`
 
 ## 2) 受管块（保留用户内容）
 
@@ -28,6 +29,12 @@ Ekko 管理的内容
 用户内容...
 ```
 
+当前使用受管块的文件：
+
+- `~/.gemini/GEMINI.md`（全局记忆；使用 `<!-- ekko:start -->` / `<!-- ekko:end -->`）
+- `~/.gemini/.env`（环境变量块；使用 `# ekko:start` / `# ekko:end`）
+- `<project>/.gemini/GEMINI.md`（项目级记忆；由 `ekko project init` 创建）
+
 ## 3) 显式覆盖（危险操作）
 
 用于“没有可靠合并语义”的文件（例如 Codex 的 `AGENTS.md`）。
@@ -37,3 +44,6 @@ Ekko 管理的内容
 - 需要显式确认：`--apply --yes`
 - 覆盖前自动备份旧文件到备份目录
 
+目前显式覆盖的文件：
+
+- `~/.codex/AGENTS.md`（通过 `ekko codex agent use` 切换；会在写入前把旧文件备份到 `~/.codex/backup/ekko/<timestamp>/AGENTS.md`，`--home` 场景下同理）

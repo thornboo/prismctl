@@ -5,6 +5,8 @@
 
 ## 1. 强烈推荐：先用沙箱演练
 
+Ekko 支持通过 `--home "<PATH>"` 或 `EKKO_HOME` 把所有读写重定向到一个“沙箱 HOME”，从而做到可控、可回收的演练。
+
 ```bash
 export EKKO_HOME="/tmp/ekko-home"
 
@@ -13,6 +15,12 @@ ekko init --tool all
 
 # 真正写入（但只写到沙箱目录）
 ekko init --tool all --apply
+```
+
+你也可以用 `ekko doctor` 验证路径映射是否符合预期：
+
+```bash
+ekko doctor
 ```
 
 ## 2. 初始化/更新模板（真实 HOME）
@@ -32,6 +40,8 @@ ekko init --tool all --apply  # apply
 ekko update --tool all --apply
 ```
 
+> 说明：`init`/`update` 都会覆盖 Ekko 命名空间内的模板文件（例如 `~/.codex/prompts/ekko/*`）。它们的“保留用户配置”主要指：不触碰 `ekko/` 之外的文件，且对少数共享文件使用受管块写入。
+
 ## 3. 配置三套工具
 
 ### Codex（Provider）
@@ -43,6 +53,11 @@ ekko codex provider set \
   --default \
   --apply
 ```
+
+该命令会更新：
+
+- `~/.codex/config.toml`：新增/更新 Ekko provider（`model_providers.ekko`）
+- `~/.codex/auth.json`：写入 `EKKO_CODEX_API_KEY`（值不会出现在 `config.toml` 明文里）
 
 ### Claude Code（env / output style）
 
@@ -56,6 +71,8 @@ ekko claude output-style use --name "ekko-engineer-professional" --apply
 ```bash
 ekko gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
 ```
+
+该命令会在 `~/.gemini/.env` 中维护一个 Ekko 受管块（不会覆盖块外内容）。
 
 ## 4. 项目初始化
 
@@ -81,4 +98,3 @@ ekko install --tool all --install-method auto --apply --yes
 - 命令参考：`../commands/index.md`
 - 模板说明：`../templates/index.md`
 - Skills：`../skills/overview.md`
-

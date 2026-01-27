@@ -6,5 +6,6 @@
 - `.ekko/plan/`：任务计划目录
 - `.gemini/GEMINI.md`：项目级记忆（受管块写入）
 
-详见：`../projects/project-init.md`。
+项目级模板的目标是“把团队协作的落盘位置固定下来”，让工作流（尤其是计划/任务记录）可以被版本控制与审计。
 
+详见：`../projects/project-init.md`。

@@ -13,5 +13,9 @@ ekko project init [--path <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
 ekko project init --path "/path/to/your/project" --apply
 ```
 
-详见：`../projects/project-init.md`。
+它会创建/更新：
 
+- `<project>/.ekko/plan/`：工作流落盘目录（`current/` 与 `history/`）
+- `<project>/.gemini/GEMINI.md`：项目级记忆（受管块写入，保留块外内容）
+
+详见：`../projects/project-init.md`。

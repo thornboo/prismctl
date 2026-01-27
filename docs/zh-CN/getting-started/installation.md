@@ -3,6 +3,8 @@
 
 ## 通过 crates.io（推荐）
 
+前置要求：已安装 Rust 工具链（推荐使用 rustup）。
+
 ```bash
 cargo install ekko
 ```
@@ -27,3 +29,8 @@ cargo install --path "crates/ekko-cli"
 ekko doctor
 ```
 
+## 卸载（可选）
+
+```bash
+cargo uninstall ekko
+```

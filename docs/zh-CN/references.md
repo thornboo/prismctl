@@ -35,21 +35,12 @@ zcf 是一个 Node.js 实现的类似工具，Ekko 使用 Rust 重写以获得�
 
 ## Rust 生态
 
-### CLI 开发
-
-- **clap**：https://docs.rs/clap - 命令行参数解析
-- **thiserror**：https://docs.rs/thiserror - 错误处理
-
-### 测试
-
-- **tempfile**：https://docs.rs/tempfile - 临时文件/目录
-- **assert_cmd**：https://docs.rs/assert_cmd - 命令行测试
-
 ### 序列化
 
 - **serde**：https://serde.rs - 序列化框架
 - **serde_json**：https://docs.rs/serde_json - JSON 支持
-- **toml**：https://docs.rs/toml - TOML 支持
+
+> 说明：当前 Ekko 只依赖 `serde` / `serde_json`。TOML 的写入采用轻量的纯文本 upsert（见 `crates/ekko-core/src/toml_text.rs`），以避免引入额外依赖并减少格式扰动。
 
 ---
 

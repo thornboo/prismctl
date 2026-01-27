@@ -2,6 +2,12 @@
 
 Ekko 是一个 Rust CLI，用于统一管理多个 AI 编程工具（Codex、Claude Code、Gemini CLI）的配置、工作流模板与风格。
 
+如果你是第一次使用，建议按以下顺序阅读：
+
+1. `getting-started/installation.md` 安装
+2. `getting-started/quickstart.md` 用沙箱演练并初始化模板
+3. `concepts/safety-model.md` 了解 Ekko 的安全模型与写入边界
+
 ## 入门
 
 - [安装](./getting-started/installation.md)

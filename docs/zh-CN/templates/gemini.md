@@ -11,6 +11,8 @@
     └── WORKFLOWS.md    # 说明性文档（命名空间文件）
 ```
 
+> 提示：所有路径均可通过 `--home "<PATH>"` 或 `EKKO_HOME` 重定向到沙箱 HOME。
+
 ## 受管块（GEMINI.md）
 
 Ekko 只更新标记块内的内容，块外内容完全保留：
@@ -20,6 +22,19 @@ Ekko 只更新标记块内的内容，块外内容完全保留：
 Ekko 管理的内容
 <!-- ekko:end -->
 ```
+
+对应命令：
+
+- `ekko init --tool gemini ...` / `ekko update --tool gemini ...`：更新 `~/.gemini/GEMINI.md` 的受管块
+- `ekko project init ...`：更新 `<project>/.gemini/GEMINI.md` 的受管块
+
+## 受管块（.env）
+
+`ekko gemini env set` 会在 `~/.gemini/.env` 中维护一个 Ekko 受管块（`# ekko:start` / `# ekko:end`），用于写入：
+
+- `GEMINI_API_KEY`
+- `GOOGLE_GEMINI_BASE_URL`（可选）
+- `GEMINI_MODEL`（可选）
 
 ## 记忆加载层级（Gemini CLI）
 

@@ -13,6 +13,8 @@
 └── skills/             # Claude skills（由 skill 命令管理）
 ```
 
+> 提示：所有路径均可通过 `--home "<PATH>"` 或 `EKKO_HOME` 重定向到沙箱 HOME。
+
 ## 内置 commands（`commands/ekko/`）
 
 | 模板 | 说明 |
@@ -59,9 +61,13 @@
 ekko claude output-style use --name "ekko-engineer-professional" --apply
 ```
 
+该命令会更新 `~/.claude/settings.json` 的 `outputStyle` 字段（详见：`../commands/claude.md`）。
+
 ### skills
 
 ```bash
 ekko skill list
 ekko skill install --name "explain-code" --apply
 ```
+
+技能机制与目录结构说明见：`../skills/overview.md`。

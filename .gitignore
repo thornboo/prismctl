@@ -167,5 +167,5 @@ Thumbs.db
 *.swo
 *~
 
-# Local task runner docs (keep local, do not commit)
-TASKS.md
+# Local task runner docs
+DEVELOPMENT.md

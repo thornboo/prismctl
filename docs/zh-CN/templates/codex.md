@@ -13,6 +13,8 @@
 └── AGENTS.md           # 系统提示（显式覆盖，危险操作）
 ```
 
+> 提示：所有路径均可通过 `--home "<PATH>"` 或 `EKKO_HOME` 重定向到沙箱 HOME。
+
 ## 内置 prompts（`prompts/ekko/`）
 
 | 模板 | 说明 |
@@ -38,6 +40,8 @@
 /prompts:workflow
 ```
 
+这些模板文件属于 Ekko 命名空间，`ekko update` 会覆盖同步到新版本。
+
 ### AGENTS（危险操作）
 
 AGENTS 模板共 6 个：
@@ -56,4 +60,11 @@ ekko codex agent list
 ekko codex agent use --name "ekko-engineer-professional" --apply --yes
 ```
 
-切换会覆盖 `~/.codex/AGENTS.md`，覆盖前会备份旧文件。
+切换会覆盖 `~/.codex/AGENTS.md`，覆盖前会备份旧文件到：
+
+- `~/.codex/backup/ekko/<timestamp>/AGENTS.md`
+
+恢复建议：
+
+1. 先用 `ekko codex agent use ...` 切到一个“接近”的内置模板
+2. 再从备份目录手动复制/合并你的自定义内容

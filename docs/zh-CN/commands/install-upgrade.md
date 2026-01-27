@@ -18,6 +18,15 @@ ekko upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>]
 - `brew`：使用 Homebrew 安装（macOS）
 - `auto`：macOS 优先 brew，其次 npm；其他平台使用 npm
 
+## 实际会执行什么
+
+Ekko 不会直接下载二进制，而是调用你机器上的包管理器：
+
+- npm：`npm install -g <package>@latest`
+- brew：`brew install <name>` / `brew upgrade <name>`（cask/formula 取决于工具）
+
+因此在使用前请确保你的环境里已正确安装并可执行 `npm` 或 `brew`。
+
 ## 工具与包名映射
 
 | 方式 | Codex | Claude Code | Gemini CLI |
@@ -34,3 +43,8 @@ ekko install --tool all --install-method auto
 # 实际执行
 ekko install --tool all --install-method auto --apply --yes
 ```
+
+建议流程：
+
+1. 先跑一遍 dry-run，确认将要执行的命令正确
+2. 再加上 `--apply --yes` 真正执行
