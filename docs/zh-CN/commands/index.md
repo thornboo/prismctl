@@ -22,10 +22,15 @@
 | `--lang <zh-CN|en>` | 模板语言（默认 `zh-CN`） |
 | `--tool <codex|claude|gemini|all>` | 选择初始化/更新/安装的目标工具 |
 | `--yes` | 对危险操作的显式确认（通常与 `--apply` 搭配） |
+| `--verbose` | 报错时附加调试上下文（cmd/args） |
 | `-h, --help` | 显示帮助信息 |
 
 ## 基础命令
 
+- `ekko` / `ekko config`：交互式向导入口（仅 TTY）
+- `config <CMD> ...`：镜像前缀（`ekko config <CMD> ...` ≡ `ekko <CMD> ...`）
+- `i`：quick init（混合模式）
+- `u`：quick update
 - `doctor`：`./doctor.md`
 - `init`：`./init.md`
 - `update`：`./update.md`

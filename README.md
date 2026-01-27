@@ -17,6 +17,20 @@ Documentation site: https://thornboo.github.io/Ekko/
 - **Safe by Default** - Dry-run mode, home sandbox, managed blocks
 - **Multi-language** - zh-CN and English templates
 
+## Language
+
+Ekko CLI supports zh-CN and English for interactive prompts (work in progress):
+
+```bash
+# English
+EKKO_LANG=en ekko
+
+# Chinese
+EKKO_LANG=zh-CN ekko
+```
+
+In the interactive wizard, you can also switch language from the menu (persisted to `~/.ekko/config.toml`).
+
 ## Installation
 
 ### From crates.io
@@ -33,23 +47,61 @@ cd ekko
 cargo install --path crates/ekko-cli
 ```
 
+### Build (local)
+
+```bash
+# Development
+cargo run -p ekko -- --help
+
+# Release binary
+cargo build -p ekko --release
+./target/release/ekko --help
+```
+
 ## Quick Start
 
 ```bash
+# Interactive wizard (TTY only)
+ekko
+
 # Show resolved paths (no writes)
 ekko doctor
 
 # Initialize all tools (dry-run by default)
 ekko init --tool all
 
+# Quick init (hybrid, supports flags)
+ekko i --tool all
+
 # Apply changes to a sandbox
 ekko init --tool all --home "/tmp/ekko-home" --apply
+
+# Mirror prefix: `ekko config <CMD> ...` ≡ `ekko <CMD> ...`
+ekko config doctor
 
 # Initialize project-level configuration
 ekko project init --path "/path/to/your/project" --apply
 ```
 
+## Icons
+
+Ekko uses Nerd Fonts (via the `devicons` crate) to render file/folder icons in TTY change previews.
+
+Disable icons:
+
+```bash
+EKKO_NO_ICONS=1 ekko init --tool all
+```
+
 ## Usage
+
+### Interactive Wizard
+
+```bash
+# Main entry point (TTY only)
+ekko
+ekko config
+```
 
 ### Template Management
 
@@ -59,6 +111,9 @@ ekko init --tool all --apply
 
 # Update templates (preserves user content)
 ekko update --tool all --apply
+
+# Quick update
+ekko u --tool all --apply
 
 # Initialize specific tool
 ekko init --tool codex --apply
@@ -162,8 +217,9 @@ Ekko is designed with safety in mind:
 Ekko/
 ├── crates/
 │   ├── ekko-cli/       # CLI entry point
-│   └── ekko-core/      # Core business logic
-│       └── assets/     # Built-in templates
+│   ├── ekko-core/      # Core business logic
+│   │   └── assets/     # Built-in templates
+│   └── ekko-i18n/      # i18n support (ftl + keys)
 ```
 
 ## Contributing

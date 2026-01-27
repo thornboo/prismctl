@@ -9,6 +9,12 @@
 ekko init --tool <codex|claude|gemini|all> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
 ```
 
+快捷别名（混合模式）：
+
+```bash
+ekko i --tool <codex|claude|gemini|all> [--lang <zh-CN|en>] [--home <PATH>] [--dry-run|--apply]
+```
+
 ## 你将得到什么
 
 - Codex：`~/.codex/prompts/ekko/*`（工作流、Git 辅助命令等）

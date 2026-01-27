@@ -3,6 +3,16 @@
 
 本页假设你已经安装好 `ekko`（见：`./installation.md`）。
 
+## 0. 交互式向导（仅 TTY）
+
+直接运行 `ekko`（或 `ekko config`）即可进入交互式向导。
+
+> 注意：在非 TTY 环境（CI / 管道）下，交互式模式会直接报错退出，避免等待输入导致假死。
+
+```bash
+ekko
+```
+
 ## 1. 强烈推荐：先用沙箱演练
 
 Ekko 支持通过 `--home "<PATH>"` 或 `EKKO_HOME` 把所有读写重定向到一个“沙箱 HOME”，从而做到可控、可回收的演练。
@@ -38,6 +48,13 @@ ekko init --tool all --apply  # apply
 
 ```bash
 ekko update --tool all --apply
+```
+
+快捷别名（可选）：
+
+```bash
+ekko i --tool all --apply
+ekko u --tool all --apply
 ```
 
 > 说明：`init`/`update` 都会覆盖 Ekko 命名空间内的模板文件（例如 `~/.codex/prompts/ekko/*`）。它们的“保留用户配置”主要指：不触碰 `ekko/` 之外的文件，且对少数共享文件使用受管块写入。

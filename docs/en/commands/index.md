@@ -22,10 +22,15 @@ This section documents Ekko CLI commands, split by feature area.
 | `--lang <zh-CN|en>` | Template language (default: `zh-CN`) |
 | `--tool <codex|claude|gemini|all>` | Select target tools for init/update/install |
 | `--yes` | Explicit confirmation for dangerous operations (usually with `--apply`) |
+| `--verbose` | Print extra debug context on errors |
 | `-h, --help` | Show help |
 
 ## Basics
 
+- `ekko` / `ekko config`: interactive wizard (TTY only)
+- `config <CMD> ...`: mirror prefix (`ekko config <CMD> ...` ≡ `ekko <CMD> ...`)
+- `i`: quick init (hybrid)
+- `u`: quick update
 - `doctor`: `./doctor.md`
 - `init`: `./init.md`
 - `update`: `./update.md`

@@ -38,7 +38,7 @@ Create does not overwrite an existing `SKILL.md` (it is "write-if-missing"), so 
 ekko skill remove --name <NAME> [--home <PATH>] [--dry-run|--apply] [--yes]
 ```
 
-⚠️ Only `--apply` performs the deletion; when applying, `--yes` is required.
+WARNING: Only `--apply` performs the deletion; when applying, `--yes` is required.
 
 ## Naming rules
 

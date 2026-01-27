@@ -60,7 +60,7 @@ ekko codex agent list
 
 Switch Codex system prompt (AGENTS.md).
 
-⚠️ Dangerous: when used with `--apply`, it overwrites existing `AGENTS.md`, requires `--yes`, and creates a backup before overwriting (if an old file exists).
+WARNING: Dangerous: when used with `--apply`, it overwrites existing `AGENTS.md`, requires `--yes`, and creates a backup before overwriting (if an old file exists).
 
 ```bash
 ekko codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]

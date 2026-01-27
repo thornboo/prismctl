@@ -14,6 +14,12 @@
 ekko update --tool <codex|claude|gemini|all> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
 ```
 
+快捷别名：
+
+```bash
+ekko u --tool <codex|claude|gemini|all> [--lang <zh-CN|en>] [--home <PATH>] [--dry-run|--apply]
+```
+
 示例：
 
 ```bash

@@ -9,6 +9,12 @@ It writes Ekko-managed, namespaced template files into each tool's config direct
 ekko init --tool <codex|claude|gemini|all> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
 ```
 
+Quick alias (hybrid):
+
+```bash
+ekko i --tool <codex|claude|gemini|all> [--lang <zh-CN|en>] [--home <PATH>] [--dry-run|--apply]
+```
+
 ## What you get
 
 - Codex: `~/.codex/prompts/ekko/*` (workflow and git helpers)

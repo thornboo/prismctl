@@ -3,6 +3,16 @@
 
 This page assumes you already installed `ekko` (see `./installation.md`).
 
+## 0. Interactive wizard (TTY only)
+
+Run `ekko` (or `ekko config`) to enter the interactive wizard.
+
+> Note: in non-TTY environments (CI / piping), interactive mode exits with an error to avoid hanging on prompts.
+
+```bash
+ekko
+```
+
 ## 1. Recommended: use a sandbox first
 
 Ekko can redirect all reads/writes into a "sandbox HOME" via `--home "<PATH>"` or `EKKO_HOME`.
@@ -38,6 +48,13 @@ Update templates (managed writes to avoid breaking user config):
 
 ```bash
 ekko update --tool all --apply
+```
+
+Quick aliases (optional):
+
+```bash
+ekko i --tool all --apply
+ekko u --tool all --apply
 ```
 
 > Note: `init` and `update` overwrite Ekko-managed files under the `ekko/` namespace (e.g. `~/.codex/prompts/ekko/*`). "Preserve user config" mainly means Ekko does not touch files outside its namespace, and uses managed blocks for a small set of shared files.
@@ -86,7 +103,7 @@ See: `../projects/project-init.md`.
 
 ## 5. Install / upgrade the AI tools globally (npm / brew)
 
-⚠️ Dangerous operation: requires `--apply --yes`.
+WARNING: Dangerous operation: requires `--apply --yes`.
 
 ```bash
 ekko install --tool all --install-method auto          # dry-run
