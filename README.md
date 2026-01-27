@@ -7,6 +7,7 @@
 Unified CLI for managing AI coding tools: **Codex**, **Claude Code**, and **Gemini CLI**.
 
 Docs: [English](docs/en/README.md) | [Chinese (Simplified)](docs/zh-CN/README.md)
+Documentation site: https://thornboo.github.io/Ekko/
 
 ## Features
 
