@@ -3,12 +3,35 @@
 
 Ekko `skill` subcommands manage Claude Code skills under `~/.claude/skills/`.
 
+Skills are a lightweight extension mechanism in Claude Code: each skill is a directory that contains at least `SKILL.md` (typically with YAML frontmatter).
+
 ## Safety
 
 - Dry-run by default (no writes)
 - Use `--apply` to write/delete
 - Removal is dangerous and requires `--yes`
 - Use `--home "/tmp/ekko-home"` to practice in a sandbox first
+
+## Directory conventions
+
+A typical skill directory looks like:
+
+```text
+~/.claude/skills/<skill-name>/
+├── SKILL.md              # required: behavior spec (often with frontmatter)
+├── scripts/              # optional: scripts/tools
+├── examples/             # optional: examples
+└── references/           # optional: snippets/references
+```
+
+Common `SKILL.md` frontmatter:
+
+```yaml
+---
+name: explain-code
+description: Explain code with diagrams and actionable notes
+---
+```
 
 ## Built-in skills
 
@@ -41,3 +64,4 @@ python ~/.claude/skills/codebase-visualizer/scripts/visualize.py .
 
 It generates `codebase-map.html` in the current directory and may try to open it in your browser.
 
+> Note: behavior depends on your local Python and GUI/browser environment. In headless environments it typically only generates the HTML file.

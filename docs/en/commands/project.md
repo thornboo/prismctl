@@ -13,5 +13,9 @@ Example:
 ekko project init --path "/path/to/your/project" --apply
 ```
 
-See: `../projects/project-init.md`.
+It creates/updates:
 
+- `<project>/.ekko/plan/`: workflow plan directories (`current/` and `history/`)
+- `<project>/.gemini/GEMINI.md`: project memory (managed block; preserves content outside the block)
+
+See: `../projects/project-init.md`.

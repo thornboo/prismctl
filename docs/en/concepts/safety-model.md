@@ -3,10 +3,18 @@
 
 Ekko is designed with safety-first defaults to reduce the risk of accidental user config damage.
 
-## 1. Dry-run by default
+## 1. Dry-run by default (no writes)
 
 - Commands that may write/delete files run in dry-run mode by default and only print the planned changes.
 - Pass `--apply` to actually write to disk.
+
+This lets you "rehearse" safely:
+
+```bash
+ekko init --tool all
+ekko update --tool all
+ekko install --tool all --install-method auto
+```
 
 ## 2. HOME sandbox (recommended)
 
@@ -24,18 +32,20 @@ This is useful for:
 - CI / integration tests
 - Avoiding changes to your real machine config during development
 
-## 3. Dangerous operations require --yes
+## 3. Dangerous operations require --yes (explicit confirmation)
 
 Operations that are not safely mergeable (or are destructive) require `--yes`, for example:
 
 - overwriting Codex `AGENTS.md`
 - removing a skill directory
+- global install/upgrade (runs `npm` or `brew`)
 
 Typical usage:
 
 ```bash
 ekko codex agent use --name ekko-engineer-professional --apply --yes
 ekko skill remove --name my-skill --apply --yes
+ekko install --tool all --install-method auto --apply --yes
 ```
 
 ## 4. Managed write strategy
@@ -46,3 +56,8 @@ Ekko uses three write strategies (see `./managed-write-strategy.md`):
 - managed blocks (preserve user content outside markers)
 - explicit overwrite (requires `--yes` + backup)
 
+## 5. Traceability (plan is visible)
+
+Ekko prints every planned change (e.g. `mkdir -p ...`, `write ...`, `run brew ...`) before you apply it.
+
+Treat the dry-run output as an audit step: confirm it looks right, then rerun with `--apply`.

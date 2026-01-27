@@ -11,6 +11,8 @@
     └── WORKFLOWS.md    # documentation (namespaced file)
 ```
 
+> Tip: all paths can be redirected via `--home "<PATH>"` or `EKKO_HOME`.
+
 ## Managed block (GEMINI.md)
 
 Ekko only updates the content inside markers and preserves everything else:
@@ -20,6 +22,19 @@ Ekko only updates the content inside markers and preserves everything else:
 Ekko-managed content
 <!-- ekko:end -->
 ```
+
+Related commands:
+
+- `ekko init --tool gemini ...` / `ekko update --tool gemini ...`: manage a block inside `~/.gemini/GEMINI.md`
+- `ekko project init ...`: manage a block inside `<project>/.gemini/GEMINI.md`
+
+## Managed block (.env)
+
+`ekko gemini env set` maintains an Ekko-managed block in `~/.gemini/.env` (`# ekko:start` / `# ekko:end`) for:
+
+- `GEMINI_API_KEY`
+- `GOOGLE_GEMINI_BASE_URL` (optional)
+- `GEMINI_MODEL` (optional)
 
 ## Memory precedence (Gemini CLI)
 

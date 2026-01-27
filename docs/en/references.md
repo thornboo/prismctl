@@ -27,21 +27,12 @@
 
 ## Rust ecosystem
 
-### CLI
-
-- clap: https://docs.rs/clap
-- thiserror: https://docs.rs/thiserror
-
-### Testing
-
-- tempfile: https://docs.rs/tempfile
-- assert_cmd: https://docs.rs/assert_cmd
-
 ### Serialization
 
 - serde: https://serde.rs
 - serde_json: https://docs.rs/serde_json
-- toml: https://docs.rs/toml
+
+> Note: Ekko currently only depends on `serde` / `serde_json`. TOML updates are implemented as lightweight text upserts (see `crates/ekko-core/src/toml_text.rs`) to keep dependencies minimal and avoid unintended formatting changes.
 
 ## Config locations
 
@@ -56,4 +47,3 @@
 - Conventional Commits: https://www.conventionalcommits.org
 - Semantic Versioning: https://semver.org
 - Keep a Changelog: https://keepachangelog.com
-

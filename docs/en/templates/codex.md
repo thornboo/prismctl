@@ -13,6 +13,8 @@
 └── AGENTS.md           # system prompt (explicit overwrite, dangerous)
 ```
 
+> Tip: all paths can be redirected via `--home "<PATH>"` or `EKKO_HOME`.
+
 ## Built-in prompts (`prompts/ekko/`)
 
 | Template | Description |
@@ -36,6 +38,8 @@ Use `/prompts:<name>` (without extension) in Codex CLI, for example:
 /prompts:workflow
 ```
 
+These templates are Ekko-owned; `ekko update` will overwrite them to sync to the latest Ekko version.
+
 ### AGENTS (dangerous)
 
 There are 6 built-in agent templates:
@@ -48,3 +52,12 @@ There are 6 built-in agent templates:
 - `ekko-rem-engineer`
 
 Switching overwrites `~/.codex/AGENTS.md`, requires `--yes`, and creates a backup before overwriting.
+
+Backup location:
+
+- `~/.codex/backup/ekko/<timestamp>/AGENTS.md`
+
+Recovery suggestion:
+
+1. Switch to a built-in template close to what you want
+2. Manually copy/merge your custom changes from the backup directory

@@ -13,6 +13,8 @@
 └── skills/             # Claude skills (managed via `ekko skill`)
 ```
 
+> Tip: all paths can be redirected via `--home "<PATH>"` or `EKKO_HOME`.
+
 ## Built-in commands (`commands/ekko/`)
 
 | Template | Description |
@@ -59,9 +61,13 @@ Use slash commands in Claude Code (filename without `.md`):
 ekko claude output-style use --name "ekko-engineer-professional" --apply
 ```
 
+This updates `outputStyle` in `~/.claude/settings.json` (see `../commands/claude.md`).
+
 ### skills
 
 ```bash
 ekko skill list
 ekko skill install --name "explain-code" --apply
 ```
+
+For skill structure and conventions, see: `../skills/overview.md`.

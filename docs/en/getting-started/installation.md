@@ -3,6 +3,8 @@
 
 ## From crates.io (recommended)
 
+Prerequisite: Rust toolchain installed (rustup recommended).
+
 ```bash
 cargo install ekko
 ```
@@ -27,3 +29,8 @@ cargo install --path "crates/ekko-cli"
 ekko doctor
 ```
 
+## Uninstall (optional)
+
+```bash
+cargo uninstall ekko
+```

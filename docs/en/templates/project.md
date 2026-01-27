@@ -6,5 +6,6 @@
 - `.ekko/plan/` for plans
 - `.gemini/GEMINI.md` (managed block)
 
-See: `../projects/project-init.md`.
+Project templates are meant to make the "team workflow on disk" explicit and version-controllable.
 
+See: `../projects/project-init.md`.

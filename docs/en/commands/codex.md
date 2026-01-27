@@ -11,12 +11,17 @@ Configure Codex model provider.
 ekko codex provider set [--home <PATH>] [--dry-run|--apply] [--provider <VALUE>] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--wire-api <VALUE>] [--default]
 ```
 
-Notes:
+Flags:
 
-- `--provider` uses built-in presets (openrouter/deepseek/ollama/volcengine/siliconflow)
-- explicit flags (`--base-url/--model/--wire-api`) override preset values
-- API key is stored in `~/.codex/auth.json` (via `temp_env_key`), not in `config.toml` plaintext
-- `--default` sets the Ekko provider as default (exact behavior depends on Codex config format)
+- `--provider` uses a built-in preset (`openrouter` / `deepseek` / `ollama` / `volcengine` / `siliconflow`)
+- `--base-url` / `--model` / `--wire-api` explicitly override preset fields
+- `--api-key` writes `EKKO_CODEX_API_KEY` into `auth.json` (not stored in plaintext in `config.toml`)
+- `--default` sets `model_provider = "ekko"` (make Ekko the default provider)
+
+Files written (under default HOME):
+
+- `~/.codex/config.toml`: upsert `[model_providers.ekko]`, optionally set `model_provider = "ekko"`
+- `~/.codex/auth.json`: write `EKKO_CODEX_API_KEY`
 
 Example:
 
@@ -28,10 +33,20 @@ ekko codex provider set \
   --apply
 ```
 
-Files written:
+More patterns:
 
-- `~/.codex/config.toml`: add/update `[model_providers.ekko]`
-- `~/.codex/auth.json`: write `EKKO_CODEX_API_KEY`
+- Only set default provider (no base_url/model changes): `ekko codex provider set --default --apply`
+- Only write API key (no config.toml changes): `ekko codex provider set --api-key "sk-xxx" --apply`
+- Fully custom provider (no preset):
+
+```bash
+ekko codex provider set \
+  --base-url "https://api.example.com/v1" \
+  --wire-api "chat" \
+  --model "gpt-4.1" \
+  --api-key "sk-xxx" \
+  --apply
+```
 
 ## `ekko codex agent list`
 
@@ -45,8 +60,24 @@ ekko codex agent list
 
 Switch Codex system prompt (AGENTS.md).
 
-⚠️ Dangerous: overwrites existing `AGENTS.md`, requires `--yes`, and creates a backup before overwriting.
+⚠️ Dangerous: when used with `--apply`, it overwrites existing `AGENTS.md`, requires `--yes`, and creates a backup before overwriting (if an old file exists).
 
 ```bash
-ekko codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] --yes
+ekko codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]
+```
+
+Behavior details:
+
+- Target file: `~/.codex/AGENTS.md` (or `<home>/.codex/AGENTS.md` under `--home`)
+- Backup path: `~/.codex/backup/ekko/<timestamp>/AGENTS.md` (only when an old file exists and is non-empty)
+- `dry-run` does not require `--yes` and does not write/backup
+
+Examples:
+
+```bash
+# Preview first (no overwrite)
+ekko codex agent use --name "ekko-engineer-professional"
+
+# Apply (explicit confirmation required)
+ekko codex agent use --name "ekko-engineer-professional" --apply --yes
 ```
