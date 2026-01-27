@@ -8,11 +8,13 @@ src = "."
 build-dir = "../../book-output"
 
 [output.html]
-default-theme = "rust"
-preferred-dark-theme = "navy"
+default-theme = "latte"
+preferred-dark-theme = "mocha"
 git-repository-url = "https://github.com/thornboo/Ekko"
 edit-url-template = "https://github.com/thornboo/Ekko/edit/master/docs/en/{path}"
 site-url = "/Ekko/"
+additional-css = ["./theme/catppuccin.css", "_shared/mdbook/lang-select.css"]
+additional-js = ["_shared/mdbook/lang-select.js"]
 
 [output.html.search]
 enable = true
