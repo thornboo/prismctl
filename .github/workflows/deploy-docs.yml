@@ -28,7 +28,8 @@ jobs:
       - name: Install mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "0.4.40"
+          # Our docs theme (Catppuccin) uses the `resource` helper, available in mdBook v0.5+.
+          mdbook-version: "0.5.2"
 
       - name: Build
         run: |
