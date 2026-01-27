@@ -93,7 +93,7 @@ fn help_en() -> String {
 pub fn cmd_doctor(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     if !args.is_empty() {
-        return Err(format!("doctor 不支持的参数: {:?}\n\n{}", args, help()));
+        return Err(err_unsupported_args_with_help("doctor", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -118,7 +118,7 @@ pub fn cmd_init(mut args: Vec<String>) -> Result<(), String> {
 
     let tool = parse_tool(&mut args)?;
     if !args.is_empty() {
-        return Err(format!("init 不支持的参数: {:?}\n\n{}", args, help()));
+        return Err(err_unsupported_args_with_help("init", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -175,7 +175,7 @@ pub fn cmd_update(mut args: Vec<String>) -> Result<(), String> {
     let tool = parse_tool(&mut args)?;
 
     if !args.is_empty() {
-        return Err(format!("update 不支持的参数: {:?}\n\n{}", args, help()));
+        return Err(err_unsupported_args_with_help("update", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -226,19 +226,19 @@ pub fn cmd_update(mut args: Vec<String>) -> Result<(), String> {
 
 pub fn cmd_project(mut args: Vec<String>) -> Result<(), String> {
     let Some(sub) = args.first().cloned() else {
-        return Err(format!("project 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("project"));
     };
     args.remove(0);
 
     match sub.as_str() {
         "init" => cmd_project_init(args),
-        _ => Err(format!("未知 project 子命令: {}\n\n{}", sub, help())),
+        _ => Err(err_unknown_subcommand_with_help("project", &sub)),
     }
 }
 
 pub fn cmd_skill(mut args: Vec<String>) -> Result<(), String> {
     let Some(sub) = args.first().cloned() else {
-        return Err(format!("skill 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("skill"));
     };
     args.remove(0);
 
@@ -247,7 +247,7 @@ pub fn cmd_skill(mut args: Vec<String>) -> Result<(), String> {
         "install" => cmd_skill_install(args),
         "create" => cmd_skill_create(args),
         "remove" => cmd_skill_remove(args),
-        _ => Err(format!("未知 skill 子命令: {}\n\n{}", sub, help())),
+        _ => Err(err_unknown_subcommand_with_help("skill", &sub)),
     }
 }
 
@@ -261,43 +261,75 @@ pub fn cmd_upgrade(mut args: Vec<String>) -> Result<(), String> {
 
 pub fn cmd_codex(mut args: Vec<String>) -> Result<(), String> {
     let Some(sub) = args.first().cloned() else {
-        return Err(format!("codex 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("codex"));
     };
     args.remove(0);
 
     match sub.as_str() {
         "provider" => cmd_codex_provider(args),
         "agent" => cmd_codex_agent(args),
-        _ => Err(format!("未知 codex 子命令: {}\n\n{}", sub, help())),
+        _ => Err(err_unknown_subcommand_with_help("codex", &sub)),
     }
 }
 
 pub fn cmd_claude(mut args: Vec<String>) -> Result<(), String> {
     let Some(sub) = args.first().cloned() else {
-        return Err(format!("claude 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("claude"));
     };
     args.remove(0);
 
     match sub.as_str() {
         "env" => cmd_claude_env(args),
         "output-style" => cmd_claude_output_style(args),
-        _ => Err(format!("未知 claude 子命令: {}\n\n{}", sub, help())),
+        _ => Err(err_unknown_subcommand_with_help("claude", &sub)),
     }
 }
 
 pub fn cmd_gemini(mut args: Vec<String>) -> Result<(), String> {
     let Some(sub) = args.first().cloned() else {
-        return Err(format!("gemini 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("gemini"));
     };
     args.remove(0);
 
     match sub.as_str() {
         "env" => cmd_gemini_env(args),
-        _ => Err(format!("未知 gemini 子命令: {}\n\n{}", sub, help())),
+        _ => Err(err_unknown_subcommand_with_help("gemini", &sub)),
     }
 }
 
 // ---- parsing helpers ----
+
+fn err_unsupported_args_with_help(cmd: &str, args: &Vec<String>) -> String {
+    crate::errors::usage(format!(
+        "{}\n\n{}",
+        tf!(
+            keys::ERROR_UNSUPPORTED_ARGS_WITH_HELP,
+            "cmd" => cmd,
+            "args" => format!("{:?}", args)
+        ),
+        help()
+    ))
+}
+
+fn err_missing_subcommand_with_help(cmd: &str) -> String {
+    crate::errors::usage(format!(
+        "{}\n\n{}",
+        tf!(keys::ERROR_MISSING_SUBCOMMAND_WITH_HELP, "cmd" => cmd),
+        help()
+    ))
+}
+
+fn err_unknown_subcommand_with_help(cmd: &str, sub: &str) -> String {
+    crate::errors::usage(format!(
+        "{}\n\n{}",
+        tf!(
+            keys::ERROR_UNKNOWN_SUBCOMMAND_WITH_HELP,
+            "cmd" => cmd,
+            "sub" => sub
+        ),
+        help()
+    ))
+}
 
 fn parse_home(args: &mut Vec<String>) -> Result<Option<PathBuf>, String> {
     let mut home: Option<PathBuf> = None;
@@ -306,7 +338,9 @@ fn parse_home(args: &mut Vec<String>) -> Result<Option<PathBuf>, String> {
         if args[i] == "--home" {
             let value = args
                 .get(i + 1)
-                .ok_or_else(|| "参数 --home 缺少值".to_string())?
+                .ok_or_else(|| {
+                    crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--home"))
+                })?
                 .to_string();
             home = Some(PathBuf::from(value));
             args.drain(i..=i + 1);
@@ -343,12 +377,19 @@ fn parse_lang(args: &mut Vec<String>) -> Result<TemplateLang, String> {
         if args[i] == "--lang" {
             let v = args
                 .get(i + 1)
-                .ok_or_else(|| "参数 --lang 缺少值".to_string())?
+                .ok_or_else(|| {
+                    crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--lang"))
+                })?
                 .as_str();
             lang = match v {
                 "zh-CN" | "zh-cn" => TemplateLang::ZhCn,
                 "en" | "en-US" | "en-us" => TemplateLang::En,
-                _ => return Err(format!("不支持的 --lang 值: {}", v)),
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_LANG_VALUE_UNSUPPORTED,
+                        "value" => v
+                    )))
+                }
             };
             args.drain(i..=i + 1);
             continue;
@@ -373,14 +414,21 @@ fn parse_tool(args: &mut Vec<String>) -> Result<ToolSelection, String> {
         if args[i] == "--tool" {
             let value = args
                 .get(i + 1)
-                .ok_or_else(|| "参数 --tool 缺少值".to_string())?
+                .ok_or_else(|| {
+                    crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--tool"))
+                })?
                 .as_str();
             tool = Some(match value {
                 "codex" => ToolSelection::Codex,
                 "claude" | "claude-code" => ToolSelection::Claude,
                 "gemini" | "gemini-cli" => ToolSelection::Gemini,
                 "all" => ToolSelection::All,
-                _ => return Err(format!("不支持的 --tool 值: {}", value)),
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_TOOL_VALUE_UNSUPPORTED,
+                        "value" => value
+                    )));
+                }
             });
             args.drain(i..=i + 1);
             continue;
@@ -388,7 +436,7 @@ fn parse_tool(args: &mut Vec<String>) -> Result<ToolSelection, String> {
         i += 1;
     }
 
-    tool.ok_or_else(|| "缺少必填参数 --tool <codex|claude|gemini|all>".to_string())
+    tool.ok_or_else(|| crate::errors::usage(t!(keys::ERROR_TOOL_FLAG_INVALID)))
 }
 
 fn take_flag(args: &mut Vec<String>, flag: &str) -> bool {
@@ -410,13 +458,23 @@ fn parse_install_method(args: &mut Vec<String>) -> Result<InstallMethod, String>
         if args[i] == "--install-method" {
             let v = args
                 .get(i + 1)
-                .ok_or_else(|| "参数 --install-method 缺少值".to_string())?
+                .ok_or_else(|| {
+                    crate::errors::usage(tf!(
+                        keys::ERROR_FLAG_MISSING_VALUE,
+                        "flag" => "--install-method"
+                    ))
+                })?
                 .as_str();
             method = match v {
                 "auto" => InstallMethod::Auto,
                 "npm" => InstallMethod::Npm,
                 "brew" => InstallMethod::Brew,
-                _ => return Err(format!("不支持的 --install-method 值: {}", v)),
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_INSTALL_METHOD_VALUE_UNSUPPORTED,
+                        "value" => v
+                    )));
+                }
             };
             args.drain(i..=i + 1);
             continue;
@@ -433,7 +491,9 @@ fn parse_project_path(args: &mut Vec<String>) -> Result<PathBuf, String> {
         if args[i] == "--path" {
             let v = args
                 .get(i + 1)
-                .ok_or_else(|| "参数 --path 缺少值".to_string())?
+                .ok_or_else(|| {
+                    crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--path"))
+                })?
                 .to_string();
             path = Some(PathBuf::from(v));
             args.drain(i..=i + 1);
@@ -444,7 +504,7 @@ fn parse_project_path(args: &mut Vec<String>) -> Result<PathBuf, String> {
 
     let p = match path {
         Some(p) => p,
-        None => env::current_dir().map_err(|e| format!("获取当前目录失败: {}", e))?,
+        None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
     };
     Ok(normalize_path(&p))
 }
@@ -467,7 +527,9 @@ fn parse_required_value(args: &mut Vec<String>, flag: &str) -> Result<String, St
         if args[i] == flag {
             value = Some(
                 args.get(i + 1)
-                    .ok_or_else(|| format!("参数 {} 缺少值", flag))?
+                    .ok_or_else(|| {
+                        crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => flag))
+                    })?
                     .to_string(),
             );
             args.drain(i..=i + 1);
@@ -475,7 +537,7 @@ fn parse_required_value(args: &mut Vec<String>, flag: &str) -> Result<String, St
         }
         i += 1;
     }
-    value.ok_or_else(|| format!("缺少参数 {}", flag))
+    value.ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_MISSING_FLAG, "flag" => flag)))
 }
 
 fn quote_path_display(path: &Path) -> String {
@@ -489,7 +551,7 @@ fn quote_path_display(path: &Path) -> String {
 fn cmd_skill_list(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     if !args.is_empty() {
-        return Err(format!("skill list 不支持的参数: {:?}\n\n{}", args, help()));
+        return Err(err_unsupported_args_with_help("skill list", &args));
     }
     let home = EkkoHome::discover(home)?;
 
@@ -529,11 +591,7 @@ fn cmd_skill_install(mut args: Vec<String>) -> Result<(), String> {
     let mode = parse_apply_mode(&mut args)?;
     let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
-        return Err(format!(
-            "skill install 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("skill install", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -561,11 +619,7 @@ fn cmd_skill_create(mut args: Vec<String>) -> Result<(), String> {
     let mode = parse_apply_mode(&mut args)?;
     let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
-        return Err(format!(
-            "skill create 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("skill create", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -595,11 +649,7 @@ fn cmd_skill_remove(mut args: Vec<String>) -> Result<(), String> {
     let yes = take_flag(&mut args, "--yes");
     let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
-        return Err(format!(
-            "skill remove 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("skill remove", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -644,11 +694,7 @@ fn cmd_project_init(mut args: Vec<String>) -> Result<(), String> {
     let lang = parse_lang(&mut args)?;
     let project_root = parse_project_path(&mut args)?;
     if !args.is_empty() {
-        return Err(format!(
-            "project init 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("project init", &args));
     }
 
     let gemini_md_path = project_root.join(".gemini").join("GEMINI.md");
@@ -683,15 +729,11 @@ fn cmd_install_or_upgrade(action: InstallAction, args: &mut Vec<String>) -> Resu
 
     let tool = parse_tool(args)?;
     if !args.is_empty() {
-        return Err(format!(
-            "{} 不支持的参数: {:?}\n\n{}",
-            match action {
-                InstallAction::Install => "install",
-                InstallAction::Upgrade => "upgrade",
-            },
-            args,
-            help()
-        ));
+        let op = match action {
+            InstallAction::Install => "install",
+            InstallAction::Upgrade => "upgrade",
+        };
+        return Err(err_unsupported_args_with_help(op, args));
     }
 
     let targets = match tool {
@@ -752,40 +794,32 @@ pub(crate) fn danger_install_confirmation(action: InstallAction) -> String {
 
 fn cmd_codex_provider(mut args: Vec<String>) -> Result<(), String> {
     let Some(action) = args.first().cloned() else {
-        return Err(format!("codex provider 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("codex provider"));
     };
     args.remove(0);
 
     match action.as_str() {
         "set" => cmd_codex_provider_set(args),
-        _ => Err(format!(
-            "未知 codex provider 子命令: {}\n\n{}",
-            action,
-            help()
-        )),
+        _ => Err(err_unknown_subcommand_with_help("codex provider", &action)),
     }
 }
 
 fn cmd_codex_agent(mut args: Vec<String>) -> Result<(), String> {
     let Some(action) = args.first().cloned() else {
-        return Err(format!("codex agent 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("codex agent"));
     };
     args.remove(0);
 
     match action.as_str() {
         "list" => cmd_codex_agent_list(args),
         "use" => cmd_codex_agent_use(args),
-        _ => Err(format!("未知 codex agent 子命令: {}\n\n{}", action, help())),
+        _ => Err(err_unknown_subcommand_with_help("codex agent", &action)),
     }
 }
 
 fn cmd_codex_agent_list(args: Vec<String>) -> Result<(), String> {
     if !args.is_empty() {
-        return Err(format!(
-            "codex agent list 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("codex agent list", &args));
     }
 
     println!("{}", t!(keys::CODEX_AGENT_LIST_TITLE));
@@ -801,35 +835,13 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     let lang = parse_lang(&mut args)?;
     let yes = take_flag(&mut args, "--yes");
 
-    let mut name: Option<String> = None;
-    let mut i = 0;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--name" => {
-                name = Some(
-                    args.get(i + 1)
-                        .ok_or_else(|| "参数 --name 缺少值".to_string())?
-                        .to_string(),
-                );
-                args.drain(i..=i + 1);
-            }
-            _ => i += 1,
-        }
-    }
-
-    let Some(name) = name else {
-        return Err("codex agent use 缺少参数 --name".to_string());
-    };
+    let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
-        return Err(format!(
-            "codex agent use 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("codex agent use", &args));
     }
 
     let tpl = templates::codex_agent_template(&name, lang)
-        .ok_or_else(|| format!("未知 agent: {}", name))?;
+        .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_UNKNOWN_AGENT, "name" => &name)))?;
 
     let home = EkkoHome::discover(home)?;
     let codex_root = home.tool_root(Tool::Codex);
@@ -845,7 +857,7 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     if !existing.trim().is_empty() {
         let ts = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .map_err(|e| format!("获取时间戳失败: {}", e))?
+            .map_err(|e| tf!(keys::ERROR_TIMESTAMP, "error" => e))?
             .as_secs();
         let backup_path = codex_root
             .join("backup")
@@ -917,15 +929,25 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
             "--provider" => {
                 let v = args
                     .get(i + 1)
-                    .ok_or_else(|| "参数 --provider 缺少值".to_string())?
+                    .ok_or_else(|| {
+                        crate::errors::usage(tf!(
+                            keys::ERROR_FLAG_MISSING_VALUE,
+                            "flag" => "--provider"
+                        ))
+                    })?
                     .to_string();
-                provider = Some(providers::parse_provider_id(&v)?);
+                provider = Some(providers::parse_provider_id(&v).map_err(crate::errors::usage)?);
                 args.drain(i..=i + 1);
             }
             "--api-key" => {
                 api_key = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --api-key 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--api-key"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -933,7 +955,12 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
             "--base-url" => {
                 base_url = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --base-url 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--base-url"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -941,7 +968,12 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
             "--model" => {
                 model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--model"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -949,7 +981,12 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
             "--wire-api" => {
                 wire_api = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --wire-api 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--wire-api"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -969,14 +1006,12 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
         && wire_api.is_none()
         && !set_default
     {
-        return Err("codex provider set 需要至少传入一个参数：--provider/--api-key/--base-url/--model/--wire-api/--default".to_string());
+        return Err(crate::errors::usage(t!(
+            keys::ERROR_CODEX_PROVIDER_SET_NEEDS_ARGS
+        )));
     }
     if !args.is_empty() {
-        return Err(format!(
-            "codex provider set 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("codex provider set", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -1062,13 +1097,13 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
 
 fn cmd_claude_env(mut args: Vec<String>) -> Result<(), String> {
     let Some(action) = args.first().cloned() else {
-        return Err(format!("claude env 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("claude env"));
     };
     args.remove(0);
 
     match action.as_str() {
         "set" => cmd_claude_env_set(args),
-        _ => Err(format!("未知 claude env 子命令: {}\n\n{}", action, help())),
+        _ => Err(err_unknown_subcommand_with_help("claude env", &action)),
     }
 }
 
@@ -1089,7 +1124,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--auth-token" => {
                 auth_token = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --auth-token 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--auth-token"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1097,7 +1137,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--base-url" => {
                 base_url = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --base-url 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--base-url"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1105,7 +1150,11 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--model" => {
                 model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(
+                                tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--model"),
+                            )
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1113,7 +1162,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--haiku-model" => {
                 haiku_model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --haiku-model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--haiku-model"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1121,7 +1175,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--sonnet-model" => {
                 sonnet_model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --sonnet-model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--sonnet-model"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1129,7 +1188,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--opus-model" => {
                 opus_model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --opus-model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--opus-model"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1145,14 +1209,12 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
         && sonnet_model.is_none()
         && opus_model.is_none()
     {
-        return Err("claude env set 需要至少传入一个参数：--auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model".to_string());
+        return Err(crate::errors::usage(t!(
+            keys::ERROR_CLAUDE_ENV_SET_NEEDS_ARGS
+        )));
     }
     if !args.is_empty() {
-        return Err(format!(
-            "claude env set 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("claude env set", &args));
     }
 
     let home = EkkoHome::discover(home)?;
@@ -1205,16 +1267,15 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
 
 fn cmd_claude_output_style(mut args: Vec<String>) -> Result<(), String> {
     let Some(action) = args.first().cloned() else {
-        return Err(format!("claude output-style 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("claude output-style"));
     };
     args.remove(0);
 
     match action.as_str() {
         "use" => cmd_claude_output_style_use(args),
-        _ => Err(format!(
-            "未知 claude output-style 子命令: {}\n\n{}",
-            action,
-            help()
+        _ => Err(err_unknown_subcommand_with_help(
+            "claude output-style",
+            &action,
         )),
     }
 }
@@ -1223,30 +1284,11 @@ fn cmd_claude_output_style_use(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     let mode = parse_apply_mode(&mut args)?;
 
-    let mut name: Option<String> = None;
-    let mut i = 0;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--name" => {
-                name = Some(
-                    args.get(i + 1)
-                        .ok_or_else(|| "参数 --name 缺少值".to_string())?
-                        .to_string(),
-                );
-                args.drain(i..=i + 1);
-            }
-            _ => i += 1,
-        }
-    }
-
-    let Some(name) = name else {
-        return Err("claude output-style use 缺少参数 --name".to_string());
-    };
+    let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
-        return Err(format!(
-            "claude output-style use 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
+        return Err(err_unsupported_args_with_help(
+            "claude output-style use",
+            &args,
         ));
     }
 
@@ -1289,13 +1331,13 @@ fn cmd_claude_output_style_use(mut args: Vec<String>) -> Result<(), String> {
 
 fn cmd_gemini_env(mut args: Vec<String>) -> Result<(), String> {
     let Some(action) = args.first().cloned() else {
-        return Err(format!("gemini env 缺少子命令\n\n{}", help()));
+        return Err(err_missing_subcommand_with_help("gemini env"));
     };
     args.remove(0);
 
     match action.as_str() {
         "set" => cmd_gemini_env_set(args),
-        _ => Err(format!("未知 gemini env 子命令: {}\n\n{}", action, help())),
+        _ => Err(err_unknown_subcommand_with_help("gemini env", &action)),
     }
 }
 
@@ -1313,7 +1355,12 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--api-key" => {
                 api_key = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --api-key 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--api-key"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1321,7 +1368,12 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--base-url" => {
                 base_url = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --base-url 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--base-url"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1329,7 +1381,11 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
             "--model" => {
                 model = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| "参数 --model 缺少值".to_string())?
+                        .ok_or_else(|| {
+                            crate::errors::usage(
+                                tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--model"),
+                            )
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -1339,16 +1395,12 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     }
 
     if api_key.is_none() && base_url.is_none() && model.is_none() {
-        return Err(
-            "gemini env set 需要至少传入一个参数：--api-key/--base-url/--model".to_string(),
-        );
+        return Err(crate::errors::usage(t!(
+            keys::ERROR_GEMINI_ENV_SET_NEEDS_ARGS
+        )));
     }
     if !args.is_empty() {
-        return Err(format!(
-            "gemini env set 不支持的参数: {:?}\n\n{}",
-            args,
-            help()
-        ));
+        return Err(err_unsupported_args_with_help("gemini env set", &args));
     }
 
     let home = EkkoHome::discover(home)?;

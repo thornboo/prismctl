@@ -29,7 +29,21 @@ EKKO_LANG=en ekko
 EKKO_LANG=zh-CN ekko
 ```
 
-In the interactive wizard, you can also switch language from the menu (persisted to `~/.ekko/config.toml`).
+You can also set language via a global flag (must be placed before the command):
+
+```bash
+ekko --lang en --help
+ekko --lang zh-CN init --tool all
+```
+
+In the interactive wizard, you can switch language from the menu (persisted to `~/.ekko/config.toml`).
+
+Config file format:
+
+```toml
+[cli]
+lang = "en"
+```
 
 ## Installation
 

@@ -11,19 +11,21 @@ fn is_interactive_tty() -> bool {
 }
 
 fn non_tty_completion_error(invocation: &str, missing: &str) -> String {
-    [
-        t!(keys::ERROR_NON_TTY_TITLE),
-        String::new(),
-        t!(keys::ERROR_NON_TTY_SCOPE),
-        tf!(keys::ERROR_NON_TTY_RUNNING, "invocation" => invocation),
-        tf!(keys::ERROR_NON_TTY_MISSING, "missing" => missing),
-        String::new(),
-        t!(keys::ERROR_NON_TTY_SOLUTIONS),
-        t!(keys::ERROR_NON_TTY_SOLUTION_TTY),
-        t!(keys::ERROR_NON_TTY_SOLUTION_ARGS),
-        t!(keys::ERROR_NON_TTY_SOLUTION_HELP),
-    ]
-    .join("\n")
+    crate::errors::usage(
+        [
+            t!(keys::ERROR_NON_TTY_TITLE),
+            String::new(),
+            t!(keys::ERROR_NON_TTY_SCOPE),
+            tf!(keys::ERROR_NON_TTY_RUNNING, "invocation" => invocation),
+            tf!(keys::ERROR_NON_TTY_MISSING, "missing" => missing),
+            String::new(),
+            t!(keys::ERROR_NON_TTY_SOLUTIONS),
+            t!(keys::ERROR_NON_TTY_SOLUTION_TTY),
+            t!(keys::ERROR_NON_TTY_SOLUTION_ARGS),
+            t!(keys::ERROR_NON_TTY_SOLUTION_HELP),
+        ]
+        .join("\n"),
+    )
 }
 
 fn tool_options() -> Vec<String> {

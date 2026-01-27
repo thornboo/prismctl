@@ -88,8 +88,9 @@ pub fn run() -> Result<(), String> {
         };
 
         if let Err(e) = result {
+            let (_, clean) = crate::errors::strip_tag(&e);
             let prefix = ui.red(ui.err());
-            println!("\n{} {}\n", prefix, e);
+            println!("\n{} {}\n", prefix, clean);
             let cont = t!(keys::ACTION_CONTINUE);
             let _ = prompt_line(&cont)?;
         }
@@ -221,7 +222,8 @@ fn skill_menu() -> Result<(), String> {
         };
 
         if let Err(e) = result {
-            println!("\n{}\n", e);
+            let (_, clean) = crate::errors::strip_tag(&e);
+            println!("\n{}\n", clean);
         }
     }
 }

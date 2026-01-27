@@ -25,6 +25,11 @@ fn collect_all_keys(dir: &str) -> HashSet<String> {
             if line.is_empty() || line.starts_with('#') {
                 continue;
             }
+            // Only collect keys from `key = value` lines.
+            // Continuation lines (e.g. indented multi-line values) are ignored.
+            if !line.contains('=') {
+                continue;
+            }
             if let Some(key) = line.split('=').next() {
                 let key = key.trim();
                 if !key.is_empty() {

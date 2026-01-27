@@ -1,11 +1,13 @@
 mod app_config;
+mod errors;
 mod icons;
 mod interactive;
 mod legacy;
 mod prompted;
 mod quick;
 
-use ekko_i18n::{keys, t, tf};
+use ekko_i18n::{keys, t, tf, Locale};
+use errors::ErrorKind;
 use std::env;
 use std::io;
 use std::io::IsTerminal;
@@ -14,12 +16,14 @@ fn main() {
     match run() {
         Ok(()) => {}
         Err(f) => {
-            eprintln!("{}", f.message);
+            let (_, clean) = errors::strip_tag(&f.message);
+            eprintln!("{}", clean);
             std::process::exit(f.code);
         }
     }
 }
 
+#[derive(Debug)]
 struct CliFailure {
     message: String,
     code: i32,
@@ -28,7 +32,26 @@ struct CliFailure {
 fn run() -> Result<(), CliFailure> {
     app_config::apply_saved_locale_best_effort();
 
-    let (verbose, args) = take_global_flag(env::args().skip(1).collect(), "--verbose");
+    let mut args: Vec<String> = env::args().skip(1).collect();
+
+    // Global `--lang` only applies when placed before the command, to avoid stealing
+    // subcommand flags like `ekko init ... --lang en` (template language).
+    let lang_override = take_leading_kv_flag(&mut args, "--lang")?;
+    if env::var_os("EKKO_LANG").is_none() {
+        if let Some(lang) = lang_override {
+            let locale = Locale::parse(&lang).ok_or_else(|| CliFailure {
+                message: errors::usage(format!(
+                    "{}\n\n{}",
+                    t!(keys::ERROR_LANG_FLAG_INVALID),
+                    legacy::help()
+                )),
+                code: 2,
+            })?;
+            ekko_i18n::set_locale(locale);
+        }
+    }
+
+    let (verbose, args) = take_global_flag(args, "--verbose");
     if args.is_empty() {
         return enter_interactive_or_fail("ekko");
     }
@@ -83,28 +106,35 @@ fn dispatch_command(cmd: &str, args: Vec<String>, verbose: bool) -> Result<(), C
 
         _ => {
             return Err(CliFailure {
-                message: format!(
+                message: errors::usage(format!(
                     "{}\n\n{}",
                     tf!(keys::ERROR_UNKNOWN_COMMAND, "cmd" => cmd),
                     legacy::help()
-                ),
+                )),
                 code: 2,
             });
         }
     };
 
-    res.map_err(|message| CliFailure {
-        code: classify_error_code(&message),
-        message: if verbose {
+    res.map_err(|message| {
+        let (kind, clean) = errors::strip_tag(&message);
+        let code = match kind {
+            Some(ErrorKind::Usage) => 2,
+            Some(ErrorKind::Runtime) => 1,
+            None => classify_error_code(clean),
+        };
+        let message = if verbose {
             format!(
                 "{}\n\n[verbose] cmd={} args={}",
-                message,
+                clean,
                 cmd,
                 args_dbg.unwrap_or_else(|| "[]".to_string())
             )
         } else {
-            message
-        },
+            clean.to_string()
+        };
+
+        CliFailure { code, message }
     })
 }
 
@@ -118,7 +148,7 @@ fn enter_interactive_or_fail(invocation: &str) -> Result<(), CliFailure> {
     }
 
     Err(CliFailure {
-        message: non_tty_interactive_error(invocation),
+        message: errors::usage(non_tty_interactive_error(invocation)),
         code: 2,
     })
 }
@@ -188,6 +218,25 @@ fn take_global_flag(mut args: Vec<String>, flag: &str) -> (bool, Vec<String>) {
     (found, args)
 }
 
+fn take_leading_kv_flag(args: &mut Vec<String>, flag: &str) -> Result<Option<String>, CliFailure> {
+    if args.first().map(|s| s.as_str()) != Some(flag) {
+        return Ok(None);
+    }
+    if args.len() < 2 {
+        return Err(CliFailure {
+            message: errors::usage(format!(
+                "{}\n\n{}",
+                t!(keys::ERROR_LANG_FLAG_INVALID),
+                legacy::help()
+            )),
+            code: 2,
+        });
+    }
+    let value = args.remove(1);
+    args.remove(0);
+    Ok(Some(value))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -215,5 +264,21 @@ mod tests {
         let (v, rest) = take_global_flag(vec!["--verbose".into(), "doctor".into()], "--verbose");
         assert!(v);
         assert_eq!(rest, vec!["doctor".to_string()]);
+    }
+
+    #[test]
+    fn takes_leading_lang_flag_only() {
+        let mut args = vec!["--lang".into(), "en".into(), "--help".into()];
+        let lang = take_leading_kv_flag(&mut args, "--lang").unwrap();
+        assert_eq!(lang.as_deref(), Some("en"));
+        assert_eq!(args, vec!["--help".to_string()]);
+
+        let mut args = vec!["init".into(), "--lang".into(), "en".into()];
+        let lang = take_leading_kv_flag(&mut args, "--lang").unwrap();
+        assert_eq!(lang, None);
+        assert_eq!(
+            args,
+            vec!["init".to_string(), "--lang".to_string(), "en".to_string()]
+        );
     }
 }

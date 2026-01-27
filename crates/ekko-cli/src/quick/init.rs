@@ -30,7 +30,12 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
             "-p" | "--provider" => {
                 provider = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--provider"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--provider"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -38,7 +43,12 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
             "-k" | "--api-key" => {
                 api_key = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--api-key"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--api-key"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -46,7 +56,12 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
             "-t" | "--tool" => {
                 tool = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--tool"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--tool"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -54,7 +69,12 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
             "--lang" => {
                 lang = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--lang"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--lang"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -62,7 +82,12 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
             "--home" => {
                 home = Some(PathBuf::from(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--home"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--home"
+                            ))
+                        })?
                         .to_string(),
                 ));
                 args.drain(i..=i + 1);
@@ -76,7 +101,7 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
                 args.remove(i);
             }
             "-h" | "--help" | "help" => {
-                return Err(help_quick_init());
+                return Err(crate::errors::usage(help_quick_init()));
             }
             _ => i += 1,
         }
@@ -95,10 +120,13 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
         api_key = prompt_api_key_if_tty()?;
     }
     if provider.is_some() && api_key.is_none() && !is_interactive_tty() {
-        return Err(tf!(keys::ERROR_NON_TTY_MISSING_FLAG, "flag" => "--api-key"));
+        return Err(crate::errors::usage(tf!(
+            keys::ERROR_NON_TTY_MISSING_FLAG,
+            "flag" => "--api-key"
+        )));
     }
     if let Some(k) = &api_key {
-        validate_api_key_format(k)?;
+        validate_api_key_format(k).map_err(crate::errors::usage)?;
     }
 
     // 1) init templates
@@ -128,7 +156,7 @@ pub fn quick_init(mut args: Vec<String>) -> Result<(), String> {
                 }
                 if let Some(p) = &provider {
                     // Validate provider early in hybrid mode.
-                    providers::parse_provider_id(p)?;
+                    providers::parse_provider_id(p).map_err(crate::errors::usage)?;
                     codex_args.push("--provider".to_string());
                     codex_args.push(p.clone());
                     codex_args.push("--default".to_string());
@@ -213,10 +241,12 @@ fn prompt_provider_if_tty() -> Result<Option<String>, String> {
     }
     let idx: usize = choice
         .parse()
-        .map_err(|_| tf!(keys::ERROR_INVALID_CHOICE, "choice" => choice))?;
+        .map_err(|_| crate::errors::usage(tf!(keys::ERROR_INVALID_CHOICE, "choice" => choice)))?;
     let ids = providers::list_provider_ids();
     let Some(id) = ids.get(idx - 1) else {
-        return Err(tf!(keys::ERROR_INVALID_CHOICE, "choice" => choice));
+        return Err(crate::errors::usage(
+            tf!(keys::ERROR_INVALID_CHOICE, "choice" => choice),
+        ));
     };
     Ok(Some((*id).to_string()))
 }

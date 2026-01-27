@@ -19,7 +19,12 @@ pub fn quick_update(mut args: Vec<String>) -> Result<(), String> {
             "-t" | "--tool" => {
                 tool = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--tool"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--tool"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -27,7 +32,12 @@ pub fn quick_update(mut args: Vec<String>) -> Result<(), String> {
             "--lang" => {
                 lang = Some(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--lang"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--lang"
+                            ))
+                        })?
                         .to_string(),
                 );
                 args.drain(i..=i + 1);
@@ -35,7 +45,12 @@ pub fn quick_update(mut args: Vec<String>) -> Result<(), String> {
             "--home" => {
                 home = Some(PathBuf::from(
                     args.get(i + 1)
-                        .ok_or_else(|| tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--home"))?
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--home"
+                            ))
+                        })?
                         .to_string(),
                 ));
                 args.drain(i..=i + 1);
@@ -49,7 +64,7 @@ pub fn quick_update(mut args: Vec<String>) -> Result<(), String> {
                 args.remove(i);
             }
             "-h" | "--help" | "help" => {
-                return Err(help_quick_update());
+                return Err(crate::errors::usage(help_quick_update()));
             }
             _ => i += 1,
         }

@@ -20,6 +20,22 @@ error-home-not-found = Error: cannot determine HOME. Set EKKO_HOME (or system HO
 error-config-dir-create = Error: failed to create config directory: { $path }: { $error }
 error-config-write = Error: failed to write config file: { $path }: { $error }
 
+# legacy/commands.rs (common parsing/usage errors)
+error-unsupported-args-with-help = Unsupported arguments for { $cmd }: { $args }
+error-missing-subcommand-with-help = Missing subcommand for { $cmd }
+error-unknown-subcommand-with-help = Unknown { $cmd } subcommand: { $sub }
+error-missing-flag = Missing argument { $flag }
+error-current-dir = Failed to get current directory: { $error }
+error-timestamp = Failed to get timestamp: { $error }
+error-lang-flag-invalid = Missing/invalid --lang <zh-CN|en>
+error-unknown-agent = Unknown agent: { $name }
+error-tool-value-unsupported = Unsupported --tool value: { $value }
+error-lang-value-unsupported = Unsupported --lang value: { $value }
+error-install-method-value-unsupported = Unsupported --install-method value: { $value }
+error-codex-provider-set-needs-args = codex provider set requires at least one of: --provider/--api-key/--base-url/--model/--wire-api/--default
+error-claude-env-set-needs-args = claude env set requires at least one of: --auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
+error-gemini-env-set-needs-args = gemini env set requires at least one of: --api-key/--base-url/--model
+
 # Quick init/update (aliases: `ekko i`, `ekko u`)
 quick-provider-presets-title = (Optional) provider presets (Codex):
 quick-skip = 0) Skip

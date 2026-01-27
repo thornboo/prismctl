@@ -21,6 +21,11 @@ error-read-input = Failed to read input: { $error }
 error-interactive-input = Interactive input failed: { $error }
 info-env-default-detected = (Detected env default; empty = use default; "-" = skip)
 
+# inquire (prompt hints)
+inquire-help-select = Use Up/Down to move, Enter to confirm
+inquire-help-multi-select = Use Up/Down to move, Space to toggle, Enter to confirm
+inquire-help-confirm = Use Y/N, Enter to confirm
+
 # Validation
 error-url-empty = URL cannot be empty
 error-url-invalid = Invalid URL (must start with http:// or https://): { $url }

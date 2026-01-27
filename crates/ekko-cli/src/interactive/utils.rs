@@ -70,7 +70,9 @@ pub fn prompt_required(prompt: &str) -> Result<String, String> {
 }
 
 pub fn prompt_confirm(prompt: &str, default: bool) -> Result<bool, String> {
+    let help = t!(keys::INQUIRE_HELP_CONFIRM);
     Confirm::new(prompt)
+        .with_help_message(&help)
         .with_default(default)
         .prompt()
         .map_err(map_inquire_error)
@@ -80,7 +82,9 @@ pub fn prompt_select<T>(prompt: &str, options: Vec<T>, default_index: usize) -> 
 where
     T: Clone + std::fmt::Display,
 {
+    let help = t!(keys::INQUIRE_HELP_SELECT);
     Select::new(prompt, options)
+        .with_help_message(&help)
         .with_starting_cursor(default_index)
         .prompt()
         .map_err(map_inquire_error)
@@ -91,7 +95,9 @@ pub fn prompt_multi_select(
     options: Vec<String>,
     default_indexes: Vec<usize>,
 ) -> Result<Vec<String>, String> {
+    let help = t!(keys::INQUIRE_HELP_MULTI_SELECT);
     MultiSelect::new(prompt, options)
+        .with_help_message(&help)
         .with_default(&default_indexes)
         .prompt()
         .map_err(map_inquire_error)

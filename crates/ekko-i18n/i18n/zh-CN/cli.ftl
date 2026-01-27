@@ -20,6 +20,22 @@ error-home-not-found = 错误: 无法确定 HOME。请设置 EKKO_HOME（或系�
 error-config-dir-create = 错误: 创建配置目录失败: { $path }: { $error }
 error-config-write = 错误: 写入配置文件失败: { $path }: { $error }
 
+# legacy/commands.rs（通用解析/用法错误）
+error-unsupported-args-with-help = { $cmd } 不支持的参数: { $args }
+error-missing-subcommand-with-help = { $cmd } 缺少子命令
+error-unknown-subcommand-with-help = 未知 { $cmd } 子命令: { $sub }
+error-missing-flag = 缺少参数 { $flag }
+error-current-dir = 获取当前目录失败: { $error }
+error-timestamp = 获取时间戳失败: { $error }
+error-lang-flag-invalid = 缺少/不合法的 --lang <zh-CN|en>
+error-unknown-agent = 未知 agent: { $name }
+error-tool-value-unsupported = 不支持的 --tool 值: { $value }
+error-lang-value-unsupported = 不支持的 --lang 值: { $value }
+error-install-method-value-unsupported = 不支持的 --install-method 值: { $value }
+error-codex-provider-set-needs-args = codex provider set 需要至少传入一个参数：--provider/--api-key/--base-url/--model/--wire-api/--default
+error-claude-env-set-needs-args = claude env set 需要至少传入一个参数：--auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
+error-gemini-env-set-needs-args = gemini env set 需要至少传入一个参数：--api-key/--base-url/--model
+
 # Quick init/update（别名：`ekko i`、`ekko u`）
 quick-provider-presets-title = （可选）provider 预设（Codex）：
 quick-skip = 0) 跳过

@@ -21,6 +21,11 @@ error-read-input = 读取输入失败: { $error }
 error-interactive-input = 交互式输入失败: { $error }
 info-env-default-detected = （已检测到环境变量默认值；留空=使用默认值；输入 "-"=跳过不写入）
 
+# inquire（交互组件提示）
+inquire-help-select = 使用 Up/Down 移动，Enter 确认
+inquire-help-multi-select = 使用 Up/Down 移动，Space 切换，Enter 确认
+inquire-help-confirm = 使用 Y/N，Enter 确认
+
 # 校验
 error-url-empty = URL 不能为空
 error-url-invalid = URL 格式不合法（需要以 http:// 或 https:// 开头）：{ $url }
