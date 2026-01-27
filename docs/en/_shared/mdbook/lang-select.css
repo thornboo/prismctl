@@ -1,0 +1,13 @@
+.lang-select {
+  margin-left: 8px;
+}
+
+.lang-select select {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(127, 127, 127, 0.6);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1;
+}

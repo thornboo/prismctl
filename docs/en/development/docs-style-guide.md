@@ -8,6 +8,7 @@ This page defines minimal documentation conventions for Ekko to keep docs discov
 - Docs are organized by locale directories: `docs/zh-CN/` and `docs/en/`
 - Keep both trees mirrored (same topics at the same relative paths)
 - Shared assets live in `docs/_shared/` (e.g. images)
+- mdBook UI assets (e.g. language switcher) live per locale under `docs/<locale>/_shared/mdbook/`
 
 ## Naming
 

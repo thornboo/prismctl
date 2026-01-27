@@ -8,6 +8,7 @@
 - 文档按语言分目录：`docs/zh-CN/` 与 `docs/en/`
 - 两个目录的结构应保持镜像（同路径对应同主题）
 - 共享资源放在 `docs/_shared/`（例如图片）
+- mdBook 的界面资源（例如语言切换器）按语言分别放在 `docs/<locale>/_shared/mdbook/`
 
 ## 文件命名
 
