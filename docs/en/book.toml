@@ -1,0 +1,19 @@
+[book]
+title = "Ekko Documentation"
+authors = ["thornboo"]
+language = "en"
+src = "."
+
+[build]
+build-dir = "../../book-output"
+
+[output.html]
+default-theme = "rust"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/thornboo/Ekko"
+edit-url-template = "https://github.com/thornboo/Ekko/edit/master/docs/en/{path}"
+site-url = "/Ekko/"
+
+[output.html.search]
+enable = true
+limit-results = 30
