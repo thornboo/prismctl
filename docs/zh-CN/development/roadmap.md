@@ -27,7 +27,7 @@ Ekko 必须遵循以下原则：
 
 ### 溯源链
 
-```
+```text
 BMAD-METHOD (31.8k ⭐) ─────┐
 claude-code-router ────────┼──→ zcf (5.3k ⭐) ──→ Ekko
 CCometixLine ──────────────┘
@@ -50,7 +50,7 @@ CCometixLine ──────────────┘
 
 ### 核心功能
 
-```
+```text
 Ekko v0.1.0
 ├── 模板管理
 │   ├── Output Styles (6个)
@@ -108,7 +108,7 @@ Ekko v0.1.0
 Skills 是 Claude Code 的轻量级扩展机制，Ekko 需要支持管理它们。
 
 **存储位置**：
-```
+```text
 ~/.claude/skills/
 ├── <skill-name>/
 │   ├── SKILL.md      # 必需：指令和配置
@@ -144,7 +144,7 @@ ekko skill remove --name <NAME> --apply --yes [--home <PATH>]
 
 ## v0.2.0 功能规划
 
-```
+```text
 Ekko v0.2.0
 ├── 状态管理
 │   ├── ekko status              # 配置状态总览
@@ -164,7 +164,7 @@ Ekko v0.2.0
 
 ## v0.3.0 功能规划
 
-```
+```text
 Ekko v0.3.0
 ├── 分发
 │   ├── Homebrew tap (thornboo/homebrew-ekko)
@@ -185,7 +185,7 @@ Ekko v0.3.0
 
 ### 注释要求
 
-```rust
+```rust,ignore
 // Good: English, concise, at key points
 fn discover(home: Option<PathBuf>) -> Result<Self> {
     // Priority: CLI arg > EKKO_HOME > HOME
@@ -219,7 +219,7 @@ fn is_empty(&self) -> bool {
 
 ### 命名约定
 
-```rust
+```rust,ignore
 // Functions: snake_case, verb first
 fn parse_home() { }
 fn apply_changeset() { }

@@ -3,4 +3,4 @@
 
 The canonical English changelog lives at the repo root:
 
-- `../../CHANGELOG.md`
+- https://github.com/thornboo/Ekko/blob/master/CHANGELOG.md

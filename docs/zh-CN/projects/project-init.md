@@ -24,7 +24,7 @@ ekko project init --lang en --apply
 
 ### 目录结构
 
-```
+```text
 <project>/
 ├── .ekko/
 │   └── plan/
@@ -80,7 +80,7 @@ Ekko 内置的 Codex/Claude 工作流模板会引用 `.ekko/plan/*` 作为计划
 
 Gemini CLI 会分层加载 `GEMINI.md`：
 
-```
+```text
 优先级（低到高）：
 1. ~/.gemini/GEMINI.md           # 全局记忆
 2. <project>/.gemini/GEMINI.md   # 项目级记忆 ← ekko project init 创建

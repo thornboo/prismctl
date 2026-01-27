@@ -5,7 +5,7 @@
 
 ## Workspace 布局
 
-```
+```text
 Ekko/
 ├── Cargo.toml              # Workspace 配置
 ├── crates/
@@ -47,7 +47,7 @@ Ekko/
 
 通过 `--home "<PATH>"` 或 `EKKO_HOME` 环境变量，将所有工具配置目录的读写重定向到沙箱：
 
-```
+```text
 原始路径              沙箱路径
 ~/.codex/     →      <sandbox>/.codex/
 ~/.claude/    →      <sandbox>/.claude/
@@ -56,7 +56,7 @@ Ekko/
 
 **实现位置**：`crates/ekko-core/src/paths.rs`
 
-```rust
+```rust,ignore
 pub struct EkkoHome {
     home_dir: PathBuf,
 }
@@ -79,7 +79,7 @@ impl EkkoHome {
 
 **实现位置**：`crates/ekko-core/src/changeset.rs`
 
-```rust
+```rust,ignore
 pub enum Change {
     CreateDirAll { path: PathBuf },
     WriteFile { path: PathBuf, bytes: Vec<u8>, overwrite: bool },
@@ -109,14 +109,14 @@ pub enum ApplyMode {
 - `crates/ekko-core/src/templates.rs`
 - `crates/ekko-core/assets/`
 
-```rust
+```rust,ignore
 pub fn plan_templates_codex(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
 pub fn plan_templates_claude(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
 pub fn plan_templates_gemini(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
 ```
 
 **资源目录结构**：
-```
+```text
 assets/
 ├── claude/
 │   ├── agents/ekko/zh-CN/
@@ -135,7 +135,7 @@ assets/
 
 **实现位置**：`crates/ekko-core/src/managed_block.rs`
 
-```rust
+```rust,ignore
 pub fn upsert_managed_block(
     content: &str,
     start_marker: &str,
@@ -176,7 +176,7 @@ Ekko 管理的内容（会被更新）
 
 ## 架构图
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                      ekko-cli                           │
 │  ┌─────────────────────────────────────────────────┐   │
@@ -215,7 +215,7 @@ Ekko 管理的内容（会被更新）
 
 ### init/update 命令
 
-```
+```text
 用户输入                    ekko-core                    文件系统
    │                           │                            │
    │  ekko update --tool all   │                            │
@@ -234,7 +234,7 @@ Ekko 管理的内容（会被更新）
 
 ### codex provider set 命令
 
-```
+```text
 用户输入                    ekko-core                    文件系统
    │                           │                            │
    │  --base-url --model       │                            │
@@ -259,7 +259,7 @@ Ekko 管理的内容（会被更新）
 
 通过 trait 注入实现测试隔离：
 
-```rust
+```rust,ignore
 pub trait FileSystem {
     fn create_dir_all(&self, path: &Path) -> io::Result<()>;
     fn write_file(&self, path: &Path, bytes: &[u8], overwrite: bool) -> io::Result<()>;

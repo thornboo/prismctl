@@ -3,7 +3,7 @@
 
 ## Paths
 
-```
+```text
 ~/.codex/
 ├── prompts/
 │   └── ekko/           # Ekko namespace (fully owned)

@@ -5,7 +5,7 @@ This document describes Ekko's workspace layout and core abstractions.
 
 ## Workspace layout
 
-```
+```text
 Ekko/
 ├── Cargo.toml              # workspace config
 ├── crates/

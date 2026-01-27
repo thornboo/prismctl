@@ -22,7 +22,7 @@ ekko project init --lang en --apply
 
 ## What it creates
 
-```
+```text
 <project>/
 ├── .ekko/
 │   └── plan/

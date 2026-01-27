@@ -3,7 +3,7 @@
 
 ## Paths
 
-```
+```text
 ~/.claude/
 ├── commands/
 │   └── ekko/           # Ekko namespace (fully owned)

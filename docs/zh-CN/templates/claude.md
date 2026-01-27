@@ -3,7 +3,7 @@
 
 ## 写入位置
 
-```
+```text
 ~/.claude/
 ├── commands/
 │   └── ekko/           # Ekko 命名空间（完全受管）

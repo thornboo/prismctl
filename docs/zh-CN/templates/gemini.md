@@ -3,7 +3,7 @@
 
 ## 写入位置
 
-```
+```text
 ~/.gemini/
 ├── .env                # Gemini CLI 环境变量
 ├── GEMINI.md           # 全局记忆（受管块写入）

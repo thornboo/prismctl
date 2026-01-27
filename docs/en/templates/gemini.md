@@ -3,7 +3,7 @@
 
 ## Paths
 
-```
+```text
 ~/.gemini/
 ├── .env                # Gemini CLI env file
 ├── GEMINI.md           # global memory (managed block)

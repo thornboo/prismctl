@@ -3,7 +3,7 @@
 
 ## 写入位置
 
-```
+```text
 ~/.codex/
 ├── prompts/
 │   └── ekko/           # Ekko 命名空间（完全受管）

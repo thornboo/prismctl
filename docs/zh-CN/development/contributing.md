@@ -40,7 +40,7 @@ cargo fmt --all
 
 ## 项目结构
 
-```
+```text
 Ekko/
 ├── crates/
 │   ├── ekko-cli/       # CLI 入口
@@ -81,7 +81,7 @@ git checkout -b feature/your-feature-name
 - 公共 API 必须有文档注释
 - 使用 `///` 格式
 
-```rust
+```rust,ignore
 /// 发现并解析 Ekko HOME 目录。
 ///
 /// # 优先级
@@ -104,7 +104,7 @@ pub fn discover(home: Option<PathBuf>) -> Result<Self, String> {
 
 使用 Conventional Commits 格式：
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -122,7 +122,7 @@ pub fn discover(home: Option<PathBuf>) -> Result<Self, String> {
 - `chore` - 构建/工具
 
 **示例**：
-```
+```text
 feat(claude): add output-style list command
 
 Add a new command to list all available output styles.
@@ -149,7 +149,7 @@ Closes #123
 3. 注释简洁，不超过一行
 4. 不注释显而易见的代码
 
-```rust
+```rust,ignore
 // Good: English, concise, at key points
 fn discover(home: Option<PathBuf>) -> Result<Self> {
     // Priority: CLI arg > EKKO_HOME > HOME
@@ -179,7 +179,7 @@ fn is_empty(&self) -> bool {
 
 当前使用 `Result<T, String>`，计划迁移到 `thiserror`：
 
-```rust
+```rust,ignore
 // Current
 fn foo() -> Result<(), String> {
     Err("error message".to_string())
@@ -193,7 +193,7 @@ fn foo() -> Result<(), EkkoError> {
 
 ### 命名约定
 
-```rust
+```rust,ignore
 // 函数：动词开头
 fn parse_home() { }
 fn apply_changeset() { }
@@ -208,7 +208,7 @@ const DEFAULT_LANG: &str = "zh-CN";
 
 ### 模块组织
 
-```rust
+```rust,ignore
 // 导入顺序
 use std::...;           // 标准库
 use external_crate::...; // 外部 crate
@@ -224,7 +224,7 @@ use super::...;         // 父模块
 
 1. **在 ekko-core 中实现业务逻辑**：
 
-```rust
+```rust,ignore
 // crates/ekko-core/src/new_feature.rs
 pub fn plan_new_feature(home: &EkkoHome) -> ChangeSet {
     let mut cs = ChangeSet::new();
@@ -235,7 +235,7 @@ pub fn plan_new_feature(home: &EkkoHome) -> ChangeSet {
 
 2. **在 ekko-cli 中添加命令处理**：
 
-```rust
+```rust,ignore
 // crates/ekko-cli/src/main.rs
 fn cmd_new_feature(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
@@ -250,7 +250,7 @@ fn cmd_new_feature(mut args: Vec<String>) -> Result<(), String> {
 
 3. **更新帮助文档**：
 
-```rust
+```rust,ignore
 fn help() -> String {
     // 添加新命令说明
 }
@@ -273,7 +273,7 @@ fn help() -> String {
 
 ### 单元测试
 
-```rust
+```rust,ignore
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -294,7 +294,7 @@ mod tests {
 
 ### 使用沙箱测试
 
-```rust
+```rust,ignore
 #[test]
 fn test_with_sandbox() {
     let temp_dir = tempfile::tempdir().unwrap();
@@ -310,12 +310,13 @@ fn test_with_sandbox() {
 
 ### 文档结构
 
-```
+```text
 docs/
 ├── README.md           # 入口（按语言跳转）
 ├── zh-CN/              # 中文文档（结构需与 en 对齐）
 ├── en/                 # English docs (mirrors zh-CN structure)
 └── _shared/            # 共享资源（图片等）
+    └── mdbook/         # mdBook 的界面资源（按语言在 docs/<locale>/_shared/mdbook/）
 ```
 
 ### 文档风格

@@ -46,7 +46,7 @@ Ekko is a Rust CLI for unified management of AI coding tools (Codex, Claude Code
 
 ## Changelog
 
-- [CHANGELOG.md](../../CHANGELOG.md)
+- [Changelog](./changelog.md)
 
 ## References
 

@@ -41,7 +41,7 @@ Ekko 是一个 Rust CLI，用于统一管理多个 AI 编程工具（Codex、Cla
 ## 更新日志
 
 - [中文更新日志](./changelog.md)
-- [英文更新日志](../../CHANGELOG.md)
+- [英文更新日志](../en/changelog.md)
 
 ## 参考链接
 
