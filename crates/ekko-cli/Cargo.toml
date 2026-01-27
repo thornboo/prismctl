@@ -17,4 +17,6 @@ path = "src/main.rs"
 
 [dependencies]
 ekko-core = { path = "../ekko-core" }
-
+inquire = "0.9.2"
+devicons = "0.6.12"
+ekko-i18n = { path = "../ekko-i18n" }

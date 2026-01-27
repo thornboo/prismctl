@@ -1,0 +1,19 @@
+[package]
+name = "ekko-i18n"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["thornboo <thornboo@users.noreply.github.com>"]
+description = "Internationalization support for Ekko"
+
+[features]
+default = []
+fluent-full = ["fluent", "fluent-bundle", "unic-langid"]
+
+[dependencies]
+fluent = { version = "0.16", optional = true }
+fluent-bundle = { version = "0.15", optional = true }
+unic-langid = { version = "0.9", optional = true }
+
+[build-dependencies]
+walkdir = "2"

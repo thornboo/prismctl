@@ -2,6 +2,7 @@
 members = [
   "crates/ekko-cli",
   "crates/ekko-core",
+  "crates/ekko-i18n",
 ]
 
 resolver = "2"
