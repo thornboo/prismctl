@@ -8,6 +8,18 @@
 
 ## [未发布]
 
+## [0.1.1] - 2026-01-27
+
+### 新增
+- mdBook 文档系统：按语言独立构建（英文为站点根路径，中文位于 `/zh-CN/`）
+- 文档右上角语言下拉切换器
+- mdBook Catppuccin 主题（默认 Latte/Mocha）
+- 文档 GitHub Pages 自动部署工作流
+
+### 修复
+- CI 中 mdBook 版本升级至 v0.5.2，修复主题渲染失败
+- 修复部分文档代码块导致的 mdBook test 失败
+
 ## [0.1.0] - 2026-01-26
 
 ### 新增
@@ -60,6 +72,6 @@
 - 受管块：保留用户自定义内容
 - 危险操作需要显式 `--yes`
 
-[未发布]: https://github.com/thornboo/ekko/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/thornboo/ekko/releases/tag/v0.1.0
-
+[未发布]: https://github.com/thornboo/Ekko/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/thornboo/Ekko/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/thornboo/Ekko/releases/tag/v0.1.0

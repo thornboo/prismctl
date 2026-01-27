@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-01-27
+
+### Added
+- mdBook documentation with per-locale builds (`en` at site root, `zh-CN` under `/zh-CN/`)
+- Language dropdown in the docs top bar
+- Catppuccin theme for mdBook (Latte/Mocha defaults)
+- GitHub Pages deployment workflow for docs
+
+### Fixed
+- GitHub Actions docs build by upgrading mdBook in CI to v0.5.2
+- mdBook test failures caused by non-Rust code fences in docs
+
 ## [0.1.0] - 2026-01-26
 
 ### Added
@@ -59,5 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Managed blocks preserve user content outside markers
 - Dangerous operations require explicit `--yes`
 
-[Unreleased]: https://github.com/thornboo/ekko/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/thornboo/ekko/releases/tag/v0.1.0
+[Unreleased]: https://github.com/thornboo/Ekko/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/thornboo/Ekko/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/thornboo/Ekko/releases/tag/v0.1.0
