@@ -2,6 +2,7 @@ use crate::json_text;
 use crate::toml_text::{self, TomlScalar};
 
 #[derive(Debug, Clone)]
+/// A fully-resolved Codex provider configuration to be written into `config.toml`.
 pub struct CodexProviderConfig {
     pub provider_id: String, // e.g. "ekko"
     pub display_name: String,
@@ -12,6 +13,7 @@ pub struct CodexProviderConfig {
     pub model: String,
 }
 
+/// Upsert an Ekko provider entry into Codex `config.toml` content (as text).
 pub fn upsert_codex_provider_in_config_toml(
     content: &str,
     cfg: &CodexProviderConfig,
@@ -53,6 +55,7 @@ pub fn upsert_codex_provider_in_config_toml(
     toml_text::upsert_table_kv(&out, &header, &kv)
 }
 
+/// Upsert an API key into Codex `auth.json` content.
 pub fn upsert_codex_api_key_in_auth_json(
     content: &str,
     temp_env_key: &str,

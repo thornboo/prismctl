@@ -3,6 +3,7 @@ use crate::managed_block::upsert_managed_block;
 use crate::templates::TemplateLang;
 use std::path::Path;
 
+/// Plan project initialization: create `.ekko/plan/` directories and manage `.gemini/GEMINI.md`.
 pub fn plan_project_init(
     project_root: &Path,
     lang: TemplateLang,
@@ -40,6 +41,7 @@ pub fn plan_project_init(
     cs
 }
 
+/// Render and upsert the Ekko-managed block for a project-level `.gemini/GEMINI.md`.
 pub fn render_project_gemini_md(existing: &str, lang: TemplateLang) -> String {
     let block = match lang {
         TemplateLang::ZhCn => include_str!("../assets/gemini/zh-CN/PROJECT_GEMINI.md"),

@@ -1,6 +1,7 @@
 use crate::json_text;
 
 #[derive(Debug, Default, Clone)]
+/// A patch describing which Claude Code environment variables should be upserted.
 pub struct ClaudeEnvPatch {
     pub auth_token: Option<String>,
     pub base_url: Option<String>,
@@ -10,6 +11,7 @@ pub struct ClaudeEnvPatch {
     pub default_opus_model: Option<String>,
 }
 
+/// Apply a `ClaudeEnvPatch` to the given `settings.json` content (as text).
 pub fn apply_claude_env_patch_to_settings_json(
     content: &str,
     patch: &ClaudeEnvPatch,
@@ -38,6 +40,7 @@ pub fn apply_claude_env_patch_to_settings_json(
     Ok(out)
 }
 
+/// Set `outputStyle` in Claude Code `settings.json` content.
 pub fn set_claude_output_style_in_settings_json(
     content: &str,
     name: &str,

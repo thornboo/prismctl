@@ -5,12 +5,14 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Whether a planned `ChangeSet` should be executed or only previewed.
 pub enum ApplyMode {
     DryRun,
     Apply,
 }
 
 #[derive(Debug, Clone)]
+/// A single side effect (filesystem write/delete or external command execution).
 pub enum Change {
     CreateDirAll {
         path: PathBuf,
@@ -79,11 +81,13 @@ fn quote_arg(arg: &str) -> String {
 }
 
 #[derive(Debug, Default, Clone)]
+/// A planned sequence of side effects that can be previewed (`DryRun`) or executed (`Apply`).
 pub struct ChangeSet {
     changes: Vec<Change>,
 }
 
 impl ChangeSet {
+    /// Create an empty `ChangeSet`.
     pub fn new() -> Self {
         Self {
             changes: Vec::new(),
@@ -106,6 +110,7 @@ impl ChangeSet {
         self.changes.extend(other.changes);
     }
 
+    /// Apply the change set using injected filesystem and command runner implementations.
     pub fn apply(
         &self,
         mode: ApplyMode,
@@ -153,6 +158,7 @@ pub trait FileSystem {
     fn path_exists(&self, path: &Path) -> bool;
 }
 
+/// Real filesystem implementation for applying changes.
 pub struct RealFileSystem;
 
 impl FileSystem for RealFileSystem {
@@ -188,6 +194,7 @@ pub trait CommandRunner {
     fn run(&self, program: &str, args: &[String]) -> io::Result<ExitStatus>;
 }
 
+/// Real command runner implementation for applying changes.
 pub struct RealCommandRunner;
 
 impl CommandRunner for RealCommandRunner {

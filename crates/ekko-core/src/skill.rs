@@ -4,16 +4,19 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// A Claude Code skill installed on disk.
 pub struct Skill {
     pub name: String,
     pub description: String,
     pub path: PathBuf,
 }
 
+/// List names of built-in skills embedded in the Ekko binary.
 pub fn list_builtin_skills() -> Vec<&'static str> {
     vec!["explain-code", "codebase-visualizer", "pr-summary"]
 }
 
+/// List currently installed skills under the resolved HOME.
 pub fn list_installed_skills(home: &EkkoHome) -> Vec<Skill> {
     let skills_root = claude_skills_root(home);
     let Ok(entries) = fs::read_dir(&skills_root) else {
@@ -44,6 +47,7 @@ pub fn list_installed_skills(home: &EkkoHome) -> Vec<Skill> {
     out
 }
 
+/// Plan changes to install a built-in skill into `~/.claude/skills/<name>/`.
 pub fn plan_install_skill(home: &EkkoHome, name: &str) -> Result<ChangeSet, String> {
     validate_skill_name(name)?;
     let Some(files) = builtin_skill_files(name) else {
@@ -71,6 +75,7 @@ pub fn plan_install_skill(home: &EkkoHome, name: &str) -> Result<ChangeSet, Stri
     Ok(cs)
 }
 
+/// Plan changes to create a new skill skeleton (write-if-missing).
 pub fn plan_create_skill(home: &EkkoHome, name: &str) -> ChangeSet {
     if validate_skill_name(name).is_err() {
         return ChangeSet::new();
@@ -90,6 +95,7 @@ pub fn plan_create_skill(home: &EkkoHome, name: &str) -> ChangeSet {
     cs
 }
 
+/// Plan changes to remove a skill directory recursively.
 pub fn plan_remove_skill(home: &EkkoHome, name: &str) -> Result<ChangeSet, String> {
     validate_skill_name(name)?;
     let skills_root = claude_skills_root(home);
@@ -99,6 +105,7 @@ pub fn plan_remove_skill(home: &EkkoHome, name: &str) -> Result<ChangeSet, Strin
     Ok(cs)
 }
 
+/// Check whether a skill exists under `~/.claude/skills/` using the injected filesystem.
 pub fn skill_exists(fs: &dyn FileSystem, home: &EkkoHome, name: &str) -> bool {
     if validate_skill_name(name).is_err() {
         return false;

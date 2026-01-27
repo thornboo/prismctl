@@ -1,3 +1,6 @@
+/// Upsert a managed block delimited by `start_marker` and `end_marker`.
+///
+/// Content outside the markers is preserved. If the block is missing, it is appended.
 pub fn upsert_managed_block(
     content: &str,
     start_marker: &str,
@@ -58,6 +61,7 @@ pub fn upsert_managed_block(
     }
 }
 
+/// Extract the content between `start_marker` and `end_marker` (without surrounding newlines).
 pub fn extract_managed_block(
     content: &str,
     start_marker: &str,

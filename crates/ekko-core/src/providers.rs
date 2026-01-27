@@ -1,4 +1,5 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Supported provider presets for Codex configuration.
 pub enum Provider {
     OpenRouter,
     DeepSeek,
@@ -34,6 +35,7 @@ pub fn parse_provider_id(id: &str) -> Result<Provider, String> {
     }
 }
 
+/// List all supported provider IDs.
 pub fn list_provider_ids() -> Vec<&'static str> {
     vec![
         "openrouter",
@@ -50,6 +52,7 @@ pub struct CodexProviderPreset {
     pub default_model: &'static str,
 }
 
+/// Return the Codex preset values for a provider.
 pub fn codex_preset(provider: Provider) -> CodexProviderPreset {
     match provider {
         Provider::OpenRouter => CodexProviderPreset {
@@ -87,6 +90,7 @@ pub struct ResolvedCodexProvider {
     pub model: String,
 }
 
+/// Resolve a Codex provider config using an optional preset plus optional explicit overrides.
 pub fn resolve_codex_provider(
     provider: Option<Provider>,
     base_url: Option<String>,

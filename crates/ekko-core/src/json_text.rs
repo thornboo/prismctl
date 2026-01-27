@@ -15,6 +15,7 @@ pub fn upsert_string_property(content: &str, key: &str, value: &str) -> Result<S
     Ok(to_stable_pretty_json(&obj))
 }
 
+/// Upsert a string entry into an object property that is itself a string map.
 pub fn upsert_string_map_entry(
     content: &str,
     key: &str,

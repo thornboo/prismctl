@@ -2,6 +2,7 @@ use crate::changeset::{Change, ChangeSet};
 use std::env;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// How Ekko should install/upgrade external CLI tools.
 pub enum InstallMethod {
     Auto,
     Npm,
@@ -9,12 +10,14 @@ pub enum InstallMethod {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Whether the plan is an initial install or an upgrade.
 pub enum InstallAction {
     Install,
     Upgrade,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// External tool to install/upgrade.
 pub enum ToolInstallTarget {
     Codex,
     ClaudeCode,
@@ -43,6 +46,7 @@ fn brew_package(tool: ToolInstallTarget) -> (&'static str, BrewPkgKind) {
     }
 }
 
+/// Plan an install/upgrade action using either npm or brew, depending on `method`.
 pub fn plan_install(
     tool: ToolInstallTarget,
     method: InstallMethod,

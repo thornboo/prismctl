@@ -1,4 +1,5 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
+/// Scalar values supported by Ekko's lightweight TOML upsert utilities.
 pub enum TomlScalar {
     Str(String),
     Bool(bool),
@@ -67,6 +68,7 @@ pub fn upsert_root_key(content: &str, key: &str, value: TomlScalar) -> String {
     out
 }
 
+/// Upsert key/value pairs under a single TOML table header (e.g. `model_providers.ekko`).
 pub fn upsert_table_kv(content: &str, header: &str, kv: &[(String, TomlScalar)]) -> String {
     let header_line = format!("[{}]", header);
     let mut lines: Vec<String> = content.lines().map(|l| l.to_string()).collect();

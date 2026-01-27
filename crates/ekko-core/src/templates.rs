@@ -5,24 +5,28 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Built-in template language variants.
 pub enum TemplateLang {
     ZhCn,
     En,
 }
 
 #[derive(Debug, Clone)]
+/// A template file to be written to disk.
 pub struct TemplateFile {
     pub path: PathBuf,
     pub contents: &'static str,
     pub overwrite: bool,
 }
 
+/// Plan changes to write Codex templates into the resolved HOME.
 pub fn plan_templates_codex(home: &EkkoHome, lang: TemplateLang) -> ChangeSet {
     let root = home.tool_root(Tool::Codex);
     let files = codex_files(root, lang);
     plan_files(files)
 }
 
+/// Names of built-in Codex agent templates.
 pub fn codex_agent_names() -> &'static [&'static str] {
     &[
         "ekko-engineer-professional",
@@ -34,6 +38,7 @@ pub fn codex_agent_names() -> &'static [&'static str] {
     ]
 }
 
+/// Return the embedded agent template content for a given name and language.
 pub fn codex_agent_template(name: &str, lang: TemplateLang) -> Option<&'static str> {
     match (name, lang) {
         ("ekko-engineer-professional", TemplateLang::ZhCn) => Some(include_str!(
@@ -76,16 +81,19 @@ pub fn codex_agent_template(name: &str, lang: TemplateLang) -> Option<&'static s
     }
 }
 
+/// Plan changes to write Claude Code templates into the resolved HOME.
 pub fn plan_templates_claude(home: &EkkoHome, lang: TemplateLang) -> ChangeSet {
     let root = home.tool_root(Tool::ClaudeCode);
     let files = claude_files(root, lang);
     plan_files(files)
 }
 
+/// Plan changes to write Gemini templates into the resolved HOME.
 pub fn plan_templates_gemini(home: &EkkoHome, lang: TemplateLang) -> ChangeSet {
     plan_templates_gemini_with_existing(home, "", lang)
 }
 
+/// Plan changes to write Gemini templates, preserving user content via a managed block.
 pub fn plan_templates_gemini_with_existing(
     home: &EkkoHome,
     existing_gemini_md: &str,
