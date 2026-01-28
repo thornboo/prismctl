@@ -7,6 +7,7 @@
 ~/.gemini/
 ├── .env                # Gemini CLI env file
 ├── GEMINI.md           # global memory (managed block)
+├── settings.json       # user settings (structured upsert)
 └── prismctl/
     └── WORKFLOWS.md    # documentation (namespaced file)
 ```
@@ -33,8 +34,19 @@ Related commands:
 `prismctl gemini env set` maintains an Prismctl-managed block in `~/.gemini/.env` (`# prismctl:start` / `# prismctl:end`) for:
 
 - `GEMINI_API_KEY`
-- `GOOGLE_GEMINI_BASE_URL` (optional)
-- `GEMINI_MODEL` (optional)
+
+Project scope is also supported via `<project>/.gemini/.env` (use `--scope project`).
+
+## settings.json (structured upsert)
+
+`prismctl gemini settings set` upserts `model.name` in:
+
+- user scope: `~/.gemini/settings.json`
+- project scope: `<project>/.gemini/settings.json`
+
+## MCP (delegates to gemini CLI)
+
+`prismctl gemini mcp ...` delegates to `gemini mcp ...` and writes MCP server configs into `mcpServers` inside the appropriate `settings.json` (user/project scope).
 
 ## Memory precedence (Gemini CLI)
 

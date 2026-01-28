@@ -37,6 +37,8 @@ This is useful for:
 Operations that are not safely mergeable (or are destructive) require `--yes`, for example:
 
 - overwriting Codex `AGENTS.md`
+- modifying Claude Code MCP configuration (delegates to `claude mcp`)
+- modifying Gemini CLI MCP configuration (delegates to `gemini mcp`)
 - removing a skill directory
 - global install/upgrade (runs `npm` or `brew`)
 
@@ -44,16 +46,19 @@ Typical usage:
 
 ```bash
 prismctl codex agent use --name prismctl-engineer-professional --apply --yes
+prismctl claude mcp add --name context7 --apply --yes
+prismctl gemini mcp add --name context7 --apply --yes
 prismctl skill remove --name my-skill --apply --yes
 prismctl install --tool all --install-method auto --apply --yes
 ```
 
 ## 4. Managed write strategy
 
-Prismctl uses three write strategies (see `./managed-write-strategy.md`):
+Prismctl uses four write strategies (see `./managed-write-strategy.md`):
 
 - namespaced files (safe to overwrite)
 - managed blocks (preserve user content outside markers)
+- structured upsert (JSON/TOML merge; may rewrite formatting but preserves semantics)
 - explicit overwrite (requires `--yes` + backup)
 
 ## 5. Traceability (plan is visible)

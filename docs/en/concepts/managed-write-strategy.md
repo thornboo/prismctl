@@ -1,7 +1,7 @@
 # Managed Write Strategy
 
 
-To avoid breaking user-owned configuration, Prismctl uses three write strategies.
+To avoid breaking user-owned configuration, Prismctl uses four write strategies.
 
 ## 1) Namespaced files (default)
 
@@ -30,10 +30,23 @@ User content...
 Current managed-block targets:
 
 - `~/.gemini/GEMINI.md` (global memory; markers `<!-- prismctl:start -->` / `<!-- prismctl:end -->`)
-- `~/.gemini/.env` (env var block; markers `# prismctl:start` / `# prismctl:end`)
+- `~/.gemini/.env` (env var block; markers `# prismctl:start` / `# prismctl:end`; currently only manages `GEMINI_API_KEY`)
+- `<project>/.gemini/.env` (project env var block; written via `prismctl gemini env set --scope project`)
 - `<project>/.gemini/GEMINI.md` (project memory; created by `prismctl project init`)
 
-## 3) Explicit overwrite (dangerous)
+## 3) Structured upsert (JSON/TOML merge)
+
+For structured config files, Prismctl parses JSON/TOML and upserts (inserts/updates) only the intended fields while preserving everything else.
+
+Note: Prismctl may rewrite the file in a stable pretty format (indent/order changes) while keeping the semantics intact.
+
+Examples:
+
+- `~/.claude/settings.json` (Claude env / outputStyle)
+- `~/.codex/config.toml`, `~/.codex/auth.json` (Codex provider / key)
+- `~/.gemini/settings.json`, `<project>/.gemini/settings.json` (Gemini settings such as `model.name`)
+
+## 4) Explicit overwrite (dangerous)
 
 For files without safe merge semantics (e.g. Codex `AGENTS.md`), Prismctl requires explicit confirmation:
 
@@ -42,4 +55,6 @@ For files without safe merge semantics (e.g. Codex `AGENTS.md`), Prismctl requir
 
 Current explicit-overwrite target:
 
-- `~/.codex/AGENTS.md` (via `prismctl codex agent use`; backups go to `~/.codex/backup/prismctl/<timestamp>/AGENTS.md`, and the same under `--home`)
+- `AGENTS.md` (via `prismctl codex agent use`; supports user/project scope)
+  - user scope: overwrite `~/.codex/AGENTS.md`, backup to `~/.codex/backup/prismctl/<timestamp>/AGENTS.md`
+  - project scope: overwrite `<project>/AGENTS.md`, backup to `<project>/.prismctl/backup/prismctl/<timestamp>/AGENTS.md`

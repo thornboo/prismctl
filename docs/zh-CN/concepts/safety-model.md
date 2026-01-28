@@ -37,6 +37,8 @@ prismctl update --tool all --apply  # 写入到 /tmp/prismctl-home 下的 .codex
 对“不可安全合并或需要额外确认”的操作，Prismctl 会要求额外提供 `--yes`：
 
 - 覆盖 Codex 的 `AGENTS.md`（会改变 Codex 全局系统提示/输出风格）
+- 修改 Claude Code 的 MCP 配置（委托 `claude mcp`）
+- 修改 Gemini CLI 的 MCP 配置（委托 `gemini mcp`）
 - 删除 Claude Code 的某个 skill（递归删除目录）
 - 全局安装/升级工具（会调用 `npm` 或 `brew` 修改系统环境）
 
@@ -44,16 +46,19 @@ prismctl update --tool all --apply  # 写入到 /tmp/prismctl-home 下的 .codex
 
 ```bash
 prismctl codex agent use --name prismctl-engineer-professional --apply --yes
+prismctl claude mcp add --name context7 --apply --yes
+prismctl gemini mcp add --name context7 --apply --yes
 prismctl skill remove --name my-skill --apply --yes
 prismctl install --tool all --install-method auto --apply --yes
 ```
 
 ## 4. 受管写入策略
 
-Prismctl 将写入分为三类（详见：`./managed-write-strategy.md`）：
+Prismctl 将写入分为四类（详见：`./managed-write-strategy.md`）：
 
 - 命名空间文件：仅写入 `prismctl/` 命名空间目录（可安全覆盖）
 - 受管块：只更新标记块，保留用户内容
+- 结构化 upsert：解析 JSON/TOML，按字段合并更新（可能重写格式，但保留语义）
 - 显式覆盖：需要 `--yes`，并在覆盖前备份（如存在旧文件）
 
 ## 5. 可追溯性（变更可见）

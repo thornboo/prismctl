@@ -10,7 +10,7 @@
 │       ├── workflow.md
 │       ├── git-commit.md
 │       └── ...
-└── AGENTS.md           # 系统提示（显式覆盖，危险操作）
+└── AGENTS.md               # 系统提示（显式覆盖，危险操作；user scope）
 ```
 
 > 提示：所有路径均可通过 `--home "<PATH>"` 或 `PRISMCTL_HOME` 重定向到沙箱 HOME。
@@ -58,11 +58,15 @@ AGENTS 模板共 6 个：
 ```bash
 prismctl codex agent list
 prismctl codex agent use --name "prismctl-engineer-professional" --apply --yes
+
+# 项目级（写入项目根目录 AGENTS.md）
+prismctl codex agent use --name "prismctl-engineer-professional" --scope project --project-path "/path/to/your/project" --apply --yes
 ```
 
-切换会覆盖 `~/.codex/AGENTS.md`，覆盖前会备份旧文件到：
+切换会覆盖目标 `AGENTS.md`，覆盖前会备份旧文件到：
 
-- `~/.codex/backup/prismctl/<timestamp>/AGENTS.md`
+- user scope：`~/.codex/backup/prismctl/<timestamp>/AGENTS.md`
+- project scope：`<project>/.prismctl/backup/prismctl/<timestamp>/AGENTS.md`
 
 恢复建议：
 

@@ -10,7 +10,7 @@
 │       ├── workflow.md
 │       ├── git-commit.md
 │       └── ...
-└── AGENTS.md           # system prompt (explicit overwrite, dangerous)
+└── AGENTS.md               # system prompt (explicit overwrite, dangerous; user scope)
 ```
 
 > Tip: all paths can be redirected via `--home "<PATH>"` or `PRISMCTL_HOME`.
@@ -56,6 +56,11 @@ Switching overwrites `~/.codex/AGENTS.md`, requires `--yes`, and creates a backu
 Backup location:
 
 - `~/.codex/backup/prismctl/<timestamp>/AGENTS.md`
+
+Project scope:
+
+- Target: `<project>/AGENTS.md` (use `--scope project --project-path "<project>"`)
+- Backup: `<project>/.prismctl/backup/prismctl/<timestamp>/AGENTS.md`
 
 Recovery suggestion:
 

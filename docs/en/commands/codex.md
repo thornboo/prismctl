@@ -63,13 +63,18 @@ Switch Codex system prompt (AGENTS.md).
 WARNING: Dangerous: when used with `--apply`, it overwrites existing `AGENTS.md`, requires `--yes`, and creates a backup before overwriting (if an old file exists).
 
 ```bash
-prismctl codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]
+prismctl codex agent use --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]
 ```
 
 Behavior details:
 
-- Target file: `~/.codex/AGENTS.md` (or `<home>/.codex/AGENTS.md` under `--home`)
-- Backup path: `~/.codex/backup/prismctl/<timestamp>/AGENTS.md` (only when an old file exists and is non-empty)
+- Default scope is `user`.
+- `--scope user`:
+  - Target file: `~/.codex/AGENTS.md` (or `<home>/.codex/AGENTS.md` under `--home`)
+  - Backup path: `~/.codex/backup/prismctl/<timestamp>/AGENTS.md` (only when an old file exists and is non-empty)
+- `--scope project`:
+  - Target file: `<project>/AGENTS.md` (`--project-path` empty = current dir)
+  - Backup path: `<project>/.prismctl/backup/prismctl/<timestamp>/AGENTS.md` (only when an old file exists and is non-empty)
 - `dry-run` does not require `--yes` and does not write/backup
 
 Examples:
@@ -77,6 +82,9 @@ Examples:
 ```bash
 # Preview first (no overwrite)
 prismctl codex agent use --name "prismctl-engineer-professional"
+
+# Project-scoped agent (writes AGENTS.md in project root)
+prismctl codex agent use --name "prismctl-engineer-professional" --scope project --project-path "/path/to/your/project"
 
 # Apply (explicit confirmation required)
 prismctl codex agent use --name "prismctl-engineer-professional" --apply --yes

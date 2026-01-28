@@ -86,7 +86,8 @@ prismctl claude output-style use --name "prismctl-engineer-professional" --apply
 ### Gemini CLI (env)
 
 ```bash
-prismctl gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
+prismctl gemini env set --api-key "xxx" --apply
+prismctl gemini settings set --model "gemini-2.0-flash" --apply
 ```
 
 This maintains an Prismctl-managed block inside `~/.gemini/.env` (preserves content outside the block).

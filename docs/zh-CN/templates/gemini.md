@@ -7,6 +7,7 @@
 ~/.gemini/
 ├── .env                # Gemini CLI 环境变量
 ├── GEMINI.md           # 全局记忆（受管块写入）
+├── settings.json       # 用户级设置（structured upsert）
 └── prismctl/
     └── WORKFLOWS.md    # 说明性文档（命名空间文件）
 ```
@@ -33,8 +34,19 @@ Prismctl 管理的内容
 `prismctl gemini env set` 会在 `~/.gemini/.env` 中维护一个 Prismctl 受管块（`# prismctl:start` / `# prismctl:end`），用于写入：
 
 - `GEMINI_API_KEY`
-- `GOOGLE_GEMINI_BASE_URL`（可选）
-- `GEMINI_MODEL`（可选）
+
+此外也支持项目级：`<project>/.gemini/.env`（通过 `--scope project`）。
+
+## settings.json（structured upsert）
+
+`prismctl gemini settings set` 会在 `settings.json` 中 upsert `model.name`：
+
+- 用户级：`~/.gemini/settings.json`
+- 项目级：`<project>/.gemini/settings.json`
+
+## MCP（依赖 gemini CLI）
+
+`prismctl gemini mcp ...` 委托 `gemini mcp ...`，把 MCP servers 写入 `settings.json` 的 `mcpServers`（scope=user/project 对应用户级/项目级 settings.json）。
 
 ## 记忆加载层级（Gemini CLI）
 

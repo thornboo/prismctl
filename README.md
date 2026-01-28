@@ -188,13 +188,22 @@ prismctl claude env set --auth-token "sk-xxx" --base-url "https://api.example.co
 
 # Set output style
 prismctl claude output-style use --name prismctl-engineer-professional --apply
+
+# MCP (delegates to claude CLI)
+prismctl claude mcp add --name context7 --scope user --apply --yes
 ```
 
 #### Gemini CLI
 
 ```bash
 # Configure API
-prismctl gemini env set --api-key "xxx" --model "gemini-pro" --apply
+prismctl gemini env set --api-key "xxx" --apply
+
+# Set model.name (writes settings.json)
+prismctl gemini settings set --model "gemini-2.5-pro" --apply
+
+# MCP (delegates to gemini CLI)
+prismctl gemini mcp add --name context7 --scope user --apply --yes
 ```
 
 ## Safety Model

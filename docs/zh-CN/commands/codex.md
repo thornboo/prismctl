@@ -63,13 +63,18 @@ prismctl codex agent list
 ⚠️ 危险操作：在 `--apply` 时会覆盖现有 `AGENTS.md`，需要 `--yes`，并在覆盖前自动备份（如存在旧文件）。
 
 ```bash
-prismctl codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]
+prismctl codex agent use --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]
 ```
 
 行为细节：
 
-- 目标文件：`~/.codex/AGENTS.md`（`--home` 场景下会写入 `<home>/.codex/AGENTS.md`）
-- 备份位置：`~/.codex/backup/prismctl/<timestamp>/AGENTS.md`（仅当旧文件存在且非空）
+- 默认 scope 为 `user`。
+- `--scope user`：
+  - 目标文件：`~/.codex/AGENTS.md`（`--home` 场景下会写入 `<home>/.codex/AGENTS.md`）
+  - 备份位置：`~/.codex/backup/prismctl/<timestamp>/AGENTS.md`（仅当旧文件存在且非空）
+- `--scope project`：
+  - 目标文件：`<project>/AGENTS.md`（`--project-path` 留空=当前目录）
+  - 备份位置：`<project>/.prismctl/backup/prismctl/<timestamp>/AGENTS.md`（仅当旧文件存在且非空）
 - `dry-run` 不需要 `--yes`，并且不会写入/备份
 
 示例：
@@ -77,6 +82,9 @@ prismctl codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--d
 ```bash
 # 先预览（不会覆盖）
 prismctl codex agent use --name "prismctl-engineer-professional"
+
+# 项目级（写入项目根目录 AGENTS.md）
+prismctl codex agent use --name "prismctl-engineer-professional" --scope project --project-path "/path/to/your/project"
 
 # 真正切换（需要显式确认）
 prismctl codex agent use --name "prismctl-engineer-professional" --apply --yes
