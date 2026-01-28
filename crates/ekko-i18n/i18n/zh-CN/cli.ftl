@@ -36,6 +36,13 @@ error-codex-provider-set-needs-args = codex provider set 需要至少传入一�
 error-claude-env-set-needs-args = claude env set 需要至少传入一个参数：--auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
 error-gemini-env-set-needs-args = gemini env set 需要至少传入一个参数：--api-key/--base-url/--model
 
+# skill name validation (ekko-core)
+error-skill-name-empty = skill 名称不能为空
+error-skill-name-dot-prefix = skill 名称不能以 '.' 开头
+error-skill-name-has-separator = skill 名称不能包含路径分隔符
+error-skill-name-invalid-chars = skill 名称仅允许 ASCII 字母/数字/连字符(-)/下划线(_)
+error-skill-unknown-builtin = 未知内置 skill: { $name }（可用: { $available }）
+
 # Quick init/update（别名：`ekko i`、`ekko u`）
 quick-provider-presets-title = （可选）provider 预设（Codex）：
 quick-skip = 0) 跳过

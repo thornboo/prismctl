@@ -36,6 +36,13 @@ error-codex-provider-set-needs-args = codex provider set requires at least one o
 error-claude-env-set-needs-args = claude env set requires at least one of: --auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
 error-gemini-env-set-needs-args = gemini env set requires at least one of: --api-key/--base-url/--model
 
+# skill name validation (ekko-core)
+error-skill-name-empty = Skill name cannot be empty
+error-skill-name-dot-prefix = Skill name cannot start with '.'
+error-skill-name-has-separator = Skill name cannot contain path separators
+error-skill-name-invalid-chars = Skill name only allows ASCII letters/digits/hyphen(-)/underscore(_)
+error-skill-unknown-builtin = Unknown built-in skill: { $name } (available: { $available })
+
 # Quick init/update (aliases: `ekko i`, `ekko u`)
 quick-provider-presets-title = (Optional) provider presets (Codex):
 quick-skip = 0) Skip

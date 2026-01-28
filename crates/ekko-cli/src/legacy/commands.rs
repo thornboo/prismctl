@@ -13,6 +13,28 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+fn localize_skill_error(raw: &str) -> String {
+    // ekko-core intentionally returns stable error codes for input validation,
+    // so the CLI can localize without coupling core to i18n.
+    match raw {
+        "EKKO_SKILL_NAME_EMPTY" => t!(keys::ERROR_SKILL_NAME_EMPTY),
+        "EKKO_SKILL_NAME_DOT_PREFIX" => t!(keys::ERROR_SKILL_NAME_DOT_PREFIX),
+        "EKKO_SKILL_NAME_HAS_SEPARATOR" => t!(keys::ERROR_SKILL_NAME_HAS_SEPARATOR),
+        "EKKO_SKILL_NAME_INVALID_CHARS" => t!(keys::ERROR_SKILL_NAME_INVALID_CHARS),
+        _ => {
+            if let Some(name) = raw.strip_prefix("EKKO_SKILL_UNKNOWN_BUILTIN:") {
+                let available = skill::list_builtin_skills().join(", ");
+                return tf!(
+                    keys::ERROR_SKILL_UNKNOWN_BUILTIN,
+                    "name" => name,
+                    "available" => available
+                );
+            }
+            raw.to_string()
+        }
+    }
+}
+
 pub fn help() -> String {
     match ekko_i18n::current_locale() {
         ekko_i18n::Locale::En => help_en(),
@@ -96,7 +118,7 @@ pub fn cmd_doctor(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("doctor", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let codex = home.tool_root(Tool::Codex);
     let claude = home.tool_root(Tool::ClaudeCode);
     let gemini = home.tool_root(Tool::GeminiCli);
@@ -121,7 +143,7 @@ pub fn cmd_init(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("init", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let gemini_existing =
         fs::read_to_string(home.tool_root(Tool::GeminiCli).join("GEMINI.md")).unwrap_or_default();
     let mut cs = ChangeSet::new();
@@ -178,7 +200,7 @@ pub fn cmd_update(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("update", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let gemini_existing =
         fs::read_to_string(home.tool_root(Tool::GeminiCli).join("GEMINI.md")).unwrap_or_default();
     let mut cs = ChangeSet::new();
@@ -553,7 +575,7 @@ fn cmd_skill_list(mut args: Vec<String>) -> Result<(), String> {
     if !args.is_empty() {
         return Err(err_unsupported_args_with_help("skill list", &args));
     }
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
 
     let installed = skill::list_installed_skills(&home);
     println!("{}", t!(keys::SKILL_BUILTIN_TITLE));
@@ -594,8 +616,9 @@ fn cmd_skill_install(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("skill install", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
-    let cs = skill::plan_install_skill(&home, &name)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = skill::plan_install_skill(&home, &name)
+        .map_err(|e| crate::errors::usage(localize_skill_error(&e)))?;
 
     let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
     println!("{}", title);
@@ -622,8 +645,9 @@ fn cmd_skill_create(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("skill create", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
-    skill::validate_skill_name(&name)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
+    skill::validate_skill_name(&name)
+        .map_err(|e| crate::errors::usage(localize_skill_error(&e)))?;
     let cs = skill::plan_create_skill(&home, &name);
 
     let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
@@ -652,8 +676,9 @@ fn cmd_skill_remove(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("skill remove", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
-    let cs = skill::plan_remove_skill(&home, &name)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = skill::plan_remove_skill(&home, &name)
+        .map_err(|e| crate::errors::usage(localize_skill_error(&e)))?;
 
     let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
     println!("{}", title);
@@ -665,7 +690,9 @@ fn cmd_skill_remove(mut args: Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     if !yes {
-        return Err(danger_skill_remove_confirmation(&name));
+        return Err(crate::errors::usage(danger_skill_remove_confirmation(
+            &name,
+        )));
     }
 
     let fs = RealFileSystem;
@@ -764,7 +791,7 @@ fn cmd_install_or_upgrade(action: InstallAction, args: &mut Vec<String>) -> Resu
     }
 
     if !yes {
-        return Err(danger_install_confirmation(action));
+        return Err(crate::errors::usage(danger_install_confirmation(action)));
     }
 
     let fs = RealFileSystem;
@@ -843,7 +870,7 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     let tpl = templates::codex_agent_template(&name, lang)
         .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_UNKNOWN_AGENT, "name" => &name)))?;
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let codex_root = home.tool_root(Tool::Codex);
     let agents_path = codex_root.join("AGENTS.md");
 
@@ -890,7 +917,7 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     }
 
     if !yes {
-        return Err(danger_codex_agent_use_confirmation());
+        return Err(crate::errors::usage(danger_codex_agent_use_confirmation()));
     }
 
     let fs = RealFileSystem;
@@ -1014,7 +1041,7 @@ fn cmd_codex_provider_set(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("codex provider set", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let codex_root = home.tool_root(Tool::Codex);
     let config_path = codex_root.join("config.toml");
     let auth_path = codex_root.join("auth.json");
@@ -1217,7 +1244,7 @@ fn cmd_claude_env_set(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("claude env set", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let claude_root = home.tool_root(Tool::ClaudeCode);
     let settings_path = claude_root.join("settings.json");
     let existing = fs::read_to_string(&settings_path).unwrap_or_default();
@@ -1292,7 +1319,7 @@ fn cmd_claude_output_style_use(mut args: Vec<String>) -> Result<(), String> {
         ));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let claude_root = home.tool_root(Tool::ClaudeCode);
     let settings_path = claude_root.join("settings.json");
     let existing = fs::read_to_string(&settings_path).unwrap_or_default();
@@ -1403,7 +1430,7 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
         return Err(err_unsupported_args_with_help("gemini env set", &args));
     }
 
-    let home = EkkoHome::discover(home)?;
+    let home = EkkoHome::discover(home).map_err(crate::errors::usage)?;
     let gemini_root = home.tool_root(Tool::GeminiCli);
     let env_path = gemini_root.join(".env");
     let existing = fs::read_to_string(&env_path).unwrap_or_default();

@@ -173,35 +173,13 @@ fn non_tty_interactive_error(invocation: &str) -> String {
 }
 
 fn classify_error_code(message: &str) -> i32 {
-    // Best-effort: keep 2 for user-facing usage errors; 1 for operational/runtime errors.
-    let usage_markers = [
-        "用法:",
-        "Usage:",
-        "不支持的参数",
-        "unsupported argument",
-        "Unsupported argument",
-        "缺少参数",
-        "Missing argument",
-        "missing argument",
-        "缺少子命令",
-        "Missing subcommand",
-        "missing subcommand",
-        "缺少必填参数",
-        "Missing required",
-        "missing required",
-        "未知命令",
-        "Unknown command",
-        "unknown command",
-        "不支持的 --",
-        "Unsupported --",
-        "unsupported --",
-        "Missing/invalid",
-        "missing/invalid",
-    ];
-    if usage_markers.iter().any(|m| message.contains(m)) {
-        return 2;
+    // Fallback only: prefer explicit tags via `crate::errors::usage/runtime`.
+    // Heuristic: if help text is present, it's almost always a usage error.
+    if message.contains("Usage:") || message.contains("用法:") {
+        2
+    } else {
+        1
     }
-    1
 }
 
 fn take_global_flag(mut args: Vec<String>, flag: &str) -> (bool, Vec<String>) {
@@ -243,12 +221,8 @@ mod tests {
 
     #[test]
     fn classifies_usage_errors_as_2() {
-        assert_eq!(classify_error_code("未知命令: x"), 2);
-        assert_eq!(classify_error_code("Unknown command: x"), 2);
-        assert_eq!(classify_error_code("缺少参数 --tool"), 2);
-        assert_eq!(classify_error_code("Missing argument --tool"), 2);
-        assert_eq!(classify_error_code("不支持的参数: [\"--x\"]"), 2);
-        assert_eq!(classify_error_code("Unsupported argument: [\"--x\"]"), 2);
+        assert_eq!(classify_error_code("Usage:\n  ekko ..."), 2);
+        assert_eq!(classify_error_code("用法:\n  ekko ..."), 2);
     }
 
     #[test]

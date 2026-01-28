@@ -3,6 +3,12 @@ use crate::paths::{EkkoHome, Tool};
 use std::fs;
 use std::path::PathBuf;
 
+const ERR_SKILL_NAME_EMPTY: &str = "EKKO_SKILL_NAME_EMPTY";
+const ERR_SKILL_NAME_DOT_PREFIX: &str = "EKKO_SKILL_NAME_DOT_PREFIX";
+const ERR_SKILL_NAME_HAS_SEPARATOR: &str = "EKKO_SKILL_NAME_HAS_SEPARATOR";
+const ERR_SKILL_NAME_INVALID_CHARS: &str = "EKKO_SKILL_NAME_INVALID_CHARS";
+const ERR_SKILL_UNKNOWN_BUILTIN_PREFIX: &str = "EKKO_SKILL_UNKNOWN_BUILTIN:";
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 /// A Claude Code skill installed on disk.
 pub struct Skill {
@@ -51,11 +57,7 @@ pub fn list_installed_skills(home: &EkkoHome) -> Vec<Skill> {
 pub fn plan_install_skill(home: &EkkoHome, name: &str) -> Result<ChangeSet, String> {
     validate_skill_name(name)?;
     let Some(files) = builtin_skill_files(name) else {
-        return Err(format!(
-            "未知内置 skill: {}（可用: {:?}）",
-            name,
-            list_builtin_skills()
-        ));
+        return Err(format!("{}{}", ERR_SKILL_UNKNOWN_BUILTIN_PREFIX, name));
     };
 
     let skills_root = claude_skills_root(home);
@@ -182,19 +184,19 @@ fn parse_skill_frontmatter(content: &str) -> (Option<String>, Option<String>) {
 
 pub fn validate_skill_name(name: &str) -> Result<(), String> {
     if name.is_empty() {
-        return Err("skill name 不能为空".to_string());
+        return Err(ERR_SKILL_NAME_EMPTY.to_string());
     }
     if name.starts_with('.') {
-        return Err("skill name 不能以 '.' 开头".to_string());
+        return Err(ERR_SKILL_NAME_DOT_PREFIX.to_string());
     }
     if name.contains('/') || name.contains('\\') {
-        return Err("skill name 不能包含路径分隔符".to_string());
+        return Err(ERR_SKILL_NAME_HAS_SEPARATOR.to_string());
     }
     if name
         .chars()
         .any(|c| !(c.is_ascii_alphanumeric() || c == '-' || c == '_'))
     {
-        return Err("skill name 仅允许 ASCII 字母/数字/连字符(-)/下划线(_)".to_string());
+        return Err(ERR_SKILL_NAME_INVALID_CHARS.to_string());
     }
     Ok(())
 }
