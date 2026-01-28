@@ -68,15 +68,7 @@ fn ensure_flag_value(
     prompt_label: &str,
     normalize: fn(&str) -> Option<&'static str>,
 ) -> Result<(), String> {
-    let mut idx: Option<usize> = None;
-    for i in 0..args.len() {
-        if args[i] == flag {
-            idx = Some(i);
-            break;
-        }
-    }
-
-    let Some(i) = idx else {
+    let Some(i) = args.iter().position(|a| a == flag) else {
         let value = prompt_select(prompt_label, tool_options(), default_index)?;
         args.push(flag.to_string());
         args.push(value);
@@ -104,15 +96,7 @@ fn ensure_flag_value(
 }
 
 fn ensure_name_flag(args: &mut Vec<String>, flag: &str, prompt_label: &str) -> Result<(), String> {
-    let mut idx: Option<usize> = None;
-    for i in 0..args.len() {
-        if args[i] == flag {
-            idx = Some(i);
-            break;
-        }
-    }
-
-    match idx {
+    match args.iter().position(|a| a == flag) {
         None => {
             let v = prompt_required(prompt_label)?;
             args.push(flag.to_string());
@@ -137,13 +121,7 @@ fn ensure_yes_confirmation(warning: &str) -> Result<bool, String> {
 }
 
 fn ensure_codex_agent_name(args: &mut Vec<String>) -> Result<(), String> {
-    let mut idx: Option<usize> = None;
-    for i in 0..args.len() {
-        if args[i] == "--name" {
-            idx = Some(i);
-            break;
-        }
-    }
+    let idx = args.iter().position(|a| a == "--name");
 
     let needs_prompt = match idx {
         None => true,
@@ -340,7 +318,7 @@ pub fn cmd_codex(mut args: Vec<String>) -> Result<(), String> {
     }
 
     // Parameter completion for: `ekko codex agent use --name <...> [--apply] [--yes]`
-    if args.get(0).map(|s| s.as_str()) == Some("agent")
+    if args.first().map(|s| s.as_str()) == Some("agent")
         && args.get(1).map(|s| s.as_str()) == Some("use")
     {
         if !is_interactive_tty() {
