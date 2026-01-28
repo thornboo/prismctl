@@ -20,3 +20,4 @@ prismctl-core = { path = "../prismctl-core" }
 inquire = "0.9.2"
 devicons = "0.6.12"
 prismctl-i18n = { path = "../prismctl-i18n" }
+crossterm = "0.29"

@@ -8,6 +8,25 @@ use std::sync::Once;
 #[cfg(unix)]
 static SIGINT_INSTALLED: Once = Once::new();
 
+fn select_page_size(item_count: usize) -> usize {
+    // Try to show all options when the terminal is tall enough, otherwise fall back to scrolling.
+    // Keep it heuristic-based: callers may have printed headers already.
+    if item_count <= 1 {
+        return item_count.max(1);
+    }
+
+    let Ok((_cols, rows)) = crossterm::terminal::size() else {
+        return item_count;
+    };
+
+    let rows = rows as usize;
+    // Reserve some rows for already-rendered content (banner), the prompt line, and help hints.
+    // This is intentionally conservative to avoid overflowing small terminals.
+    let available = rows.saturating_sub(12);
+    let min_page = if item_count < 3 { item_count } else { 3 };
+    available.max(min_page).min(item_count)
+}
+
 pub fn install_signal_handlers() {
     #[cfg(unix)]
     {
@@ -83,9 +102,11 @@ where
     T: Clone + std::fmt::Display,
 {
     let help = t!(keys::INQUIRE_HELP_SELECT);
+    let page_size = select_page_size(options.len());
     Select::new(prompt, options)
         .with_help_message(&help)
         .with_starting_cursor(default_index)
+        .with_page_size(page_size)
         .prompt()
         .map_err(map_inquire_error)
 }
@@ -96,9 +117,11 @@ pub fn prompt_multi_select(
     default_indexes: Vec<usize>,
 ) -> Result<Vec<String>, String> {
     let help = t!(keys::INQUIRE_HELP_MULTI_SELECT);
+    let page_size = select_page_size(options.len());
     MultiSelect::new(prompt, options)
         .with_help_message(&help)
         .with_default(&default_indexes)
+        .with_page_size(page_size)
         .prompt()
         .map_err(map_inquire_error)
 }

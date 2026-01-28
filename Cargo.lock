@@ -293,6 +293,7 @@ dependencies = [
 name = "prismctl"
 version = "0.1.0"
 dependencies = [
+ "crossterm",
  "devicons",
  "inquire",
  "prismctl-core",

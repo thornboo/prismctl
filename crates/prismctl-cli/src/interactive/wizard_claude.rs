@@ -1,8 +1,9 @@
 use crate::interactive::utils::{
     prompt_confirm, prompt_line, prompt_optional, prompt_required, prompt_secret_with_env_default,
-    prompt_select, validate_api_key_format, validate_http_url,
+    prompt_multi_select, prompt_select, validate_api_key_format, validate_http_url,
 };
 use crate::legacy;
+use prismctl_core::mcp;
 use prismctl_core::skill;
 use prismctl_i18n::{keys, t, tf};
 
@@ -32,53 +33,51 @@ pub fn wizard_configure_claude() -> Result<(), String> {
     let opus_prompt = t!(keys::WIZARD_CLAUDE_PROMPT_OPUS_MODEL);
     let opus_model = prompt_optional(&opus_prompt)?;
 
-    if auth_token.is_none()
+    let has_env_changes = !(auth_token.is_none()
         && base_url.is_none()
         && model.is_none()
         && haiku_model.is_none()
         && sonnet_model.is_none()
-        && opus_model.is_none()
-    {
-        println!("{}\n", t!(keys::WIZARD_NO_CHANGES_CANCELLED));
-        return Ok(());
-    }
+        && opus_model.is_none());
 
-    let mut args = vec!["env".to_string(), "set".to_string()];
-    if let Some(v) = auth_token {
-        args.push("--auth-token".to_string());
-        args.push(v);
-    }
-    if let Some(v) = base_url {
-        args.push("--base-url".to_string());
-        args.push(v);
-    }
-    if let Some(v) = model {
-        args.push("--model".to_string());
-        args.push(v);
-    }
-    if let Some(v) = haiku_model {
-        args.push("--haiku-model".to_string());
-        args.push(v);
-    }
-    if let Some(v) = sonnet_model {
-        args.push("--sonnet-model".to_string());
-        args.push(v);
-    }
-    if let Some(v) = opus_model {
-        args.push("--opus-model".to_string());
-        args.push(v);
-    }
+    if has_env_changes {
+        let mut args = vec!["env".to_string(), "set".to_string()];
+        if let Some(v) = auth_token {
+            args.push("--auth-token".to_string());
+            args.push(v);
+        }
+        if let Some(v) = base_url {
+            args.push("--base-url".to_string());
+            args.push(v);
+        }
+        if let Some(v) = model {
+            args.push("--model".to_string());
+            args.push(v);
+        }
+        if let Some(v) = haiku_model {
+            args.push("--haiku-model".to_string());
+            args.push(v);
+        }
+        if let Some(v) = sonnet_model {
+            args.push("--sonnet-model".to_string());
+            args.push(v);
+        }
+        if let Some(v) = opus_model {
+            args.push("--opus-model".to_string());
+            args.push(v);
+        }
 
-    legacy::cmd_claude(args.clone())?;
+        legacy::cmd_claude(args.clone())?;
 
-    let confirm = t!(keys::ACTION_CONFIRM_APPLY);
-    if !prompt_confirm(&confirm, false)? {
-        println!();
-        return Ok(());
+        let confirm = t!(keys::ACTION_CONFIRM_APPLY);
+        if prompt_confirm(&confirm, false)? {
+            args.push("--apply".to_string());
+            legacy::cmd_claude(args)?;
+        }
+    } else {
+        // Still continue to optional steps (output style / skills / MCP).
+        println!("{}\n", t!(keys::WIZARD_CLAUDE_ENV_SKIP));
     }
-
-    args.push("--apply".to_string());
-    legacy::cmd_claude(args)?;
 
     // Optional: output style.
     println!("\n{}", t!(keys::WIZARD_CLAUDE_OUTPUT_STYLE_TITLE));
@@ -124,6 +123,91 @@ pub fn wizard_configure_claude() -> Result<(), String> {
                         s,
                         "--apply".to_string(),
                     ])?;
+                }
+            }
+        }
+    }
+
+    // Optional: configure MCP servers (delegates to `claude mcp add`).
+    println!("\n{}", t!(keys::WIZARD_CLAUDE_MCP_TITLE));
+    let p = t!(keys::WIZARD_CLAUDE_MCP_CONFIRM);
+    if prompt_confirm(&p, false)? {
+        let _ = legacy::cmd_claude(vec!["mcp".to_string(), "builtin".to_string()]);
+
+        let options = mcp::list_builtin_claude_mcp_servers()
+            .iter()
+            .map(|s| s.id.to_string())
+            .collect::<Vec<_>>();
+        let title = t!(keys::WIZARD_CLAUDE_MCP_SELECT);
+        let selected = prompt_multi_select(&title, options, Vec::new())?;
+        if selected.is_empty() {
+            println!("{}\n", t!(keys::WIZARD_CLAUDE_MCP_EMPTY_SKIP));
+        } else {
+            let scope_title = t!(keys::WIZARD_CLAUDE_MCP_SCOPE_TITLE);
+            let scope_local = t!(keys::WIZARD_CLAUDE_MCP_SCOPE_LOCAL);
+            let scope_project = t!(keys::WIZARD_CLAUDE_MCP_SCOPE_PROJECT);
+            let scope_user = t!(keys::WIZARD_CLAUDE_MCP_SCOPE_USER);
+            let scope_choice = prompt_select(
+                &scope_title,
+                vec![scope_local.clone(), scope_project.clone(), scope_user.clone()],
+                0,
+            )?;
+            let scope_flag = if scope_choice == scope_project {
+                "project"
+            } else if scope_choice == scope_user {
+                "user"
+            } else {
+                "local"
+            };
+
+            let project_path = if scope_flag == "project" {
+                let p = t!(keys::WIZARD_CLAUDE_MCP_PROJECT_PATH_PROMPT);
+                let raw = prompt_line(&p)?;
+                let v = raw.trim();
+                if v.is_empty() {
+                    None
+                } else {
+                    Some(v.to_string())
+                }
+            } else {
+                None
+            };
+
+            // Preview planned changes (dry-run).
+            for id in &selected {
+                let mut cmd = vec![
+                    "mcp".to_string(),
+                    "add".to_string(),
+                    "--name".to_string(),
+                    id.clone(),
+                    "--scope".to_string(),
+                    scope_flag.to_string(),
+                ];
+                if let Some(p) = &project_path {
+                    cmd.push("--project-path".to_string());
+                    cmd.push(p.clone());
+                }
+                legacy::cmd_claude(cmd)?;
+            }
+
+            let confirm = t!(keys::WIZARD_CLAUDE_MCP_CONFIRM_WRITE);
+            if prompt_confirm(&confirm, false)? {
+                for id in selected {
+                    let mut cmd = vec![
+                        "mcp".to_string(),
+                        "add".to_string(),
+                        "--name".to_string(),
+                        id,
+                        "--scope".to_string(),
+                        scope_flag.to_string(),
+                        "--apply".to_string(),
+                        "--yes".to_string(),
+                    ];
+                    if let Some(p) = &project_path {
+                        cmd.push("--project-path".to_string());
+                        cmd.push(p.clone());
+                    }
+                    legacy::cmd_claude(cmd)?;
                 }
             }
         }

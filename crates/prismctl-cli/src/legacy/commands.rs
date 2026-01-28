@@ -3,6 +3,7 @@ use prismctl_core::claude::{self, ClaudeEnvPatch};
 use prismctl_core::codex::{self, CodexProviderConfig};
 use prismctl_core::installer::{InstallAction, InstallMethod, ToolInstallTarget};
 use prismctl_core::managed_block::{extract_managed_block, upsert_managed_block};
+use prismctl_core::mcp::{self, ClaudeMcpScope};
 use prismctl_core::paths::{PrismctlHome, Tool};
 use prismctl_core::providers;
 use prismctl_core::skill;
@@ -62,11 +63,23 @@ fn help_zh_cn() -> String {
         "  prismctl skill create --name <VALUE> [--home <PATH>] [--dry-run|--apply]",
         "  prismctl skill remove --name <VALUE> [--home <PATH>] [--dry-run|--apply] [--yes]\n",
         "  prismctl codex agent list",
-        "  prismctl codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl codex agent use --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]\n",
         "  prismctl codex provider set [--home <PATH>] [--dry-run|--apply] [--provider <VALUE>] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--wire-api <VALUE>] [--default]\n",
         "  prismctl claude env set [--home <PATH>] [--dry-run|--apply] [--auth-token <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--haiku-model <VALUE>] [--sonnet-model <VALUE>] [--opus-model <VALUE>]\n",
         "  prismctl claude output-style use --name <VALUE> [--home <PATH>] [--dry-run|--apply]\n",
-        "  prismctl gemini env set [--home <PATH>] [--dry-run|--apply] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>]\n",
+        "  prismctl claude mcp list [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl claude mcp builtin\n",
+        "  prismctl claude mcp add --name <VALUE> [--scope <local|project|user>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl claude mcp get --name <VALUE> [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl claude mcp remove --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini env set [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] --api-key <VALUE>\n",
+        "  prismctl gemini settings set [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] --model <VALUE>\n",
+        "  prismctl gemini mcp list [--scope <user|project>] [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl gemini mcp builtin\n",
+        "  prismctl gemini mcp add --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp remove --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp enable --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp disable --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
         "  prismctl project init [--path <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]\n",
         "行为:",
         "  - 默认 dry-run：仅打印将执行的变更，不会写入任何文件。",
@@ -97,11 +110,23 @@ fn help_en() -> String {
         "  prismctl skill create --name <VALUE> [--home <PATH>] [--dry-run|--apply]",
         "  prismctl skill remove --name <VALUE> [--home <PATH>] [--dry-run|--apply] [--yes]\n",
         "  prismctl codex agent list",
-        "  prismctl codex agent use --name <VALUE> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl codex agent use --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply] [--yes]\n",
         "  prismctl codex provider set [--home <PATH>] [--dry-run|--apply] [--provider <VALUE>] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--wire-api <VALUE>] [--default]\n",
         "  prismctl claude env set [--home <PATH>] [--dry-run|--apply] [--auth-token <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--haiku-model <VALUE>] [--sonnet-model <VALUE>] [--opus-model <VALUE>]\n",
         "  prismctl claude output-style use --name <VALUE> [--home <PATH>] [--dry-run|--apply]\n",
-        "  prismctl gemini env set [--home <PATH>] [--dry-run|--apply] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>]\n",
+        "  prismctl claude mcp list [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl claude mcp builtin\n",
+        "  prismctl claude mcp add --name <VALUE> [--scope <local|project|user>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl claude mcp get --name <VALUE> [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl claude mcp remove --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini env set [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] --api-key <VALUE>\n",
+        "  prismctl gemini settings set [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] --model <VALUE>\n",
+        "  prismctl gemini mcp list [--scope <user|project>] [--project-path <PATH>] [--home <PATH>]\n",
+        "  prismctl gemini mcp builtin\n",
+        "  prismctl gemini mcp add --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp remove --name <VALUE> [--scope <user|project>] [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp enable --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
+        "  prismctl gemini mcp disable --name <VALUE> [--project-path <PATH>] [--home <PATH>] [--dry-run|--apply] [--yes]\n",
         "  prismctl project init [--path <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]\n",
         "Behavior:",
         "  - Default is dry-run: prints planned changes without writing files.",
@@ -124,11 +149,93 @@ pub fn cmd_doctor(mut args: Vec<String>) -> Result<(), String> {
     let gemini = home.tool_root(Tool::GeminiCli);
     let claude_settings = home.claude_settings_path();
 
-    println!("Prismctl HOME: {}", home.home_dir().display());
-    println!("Codex root: {}", codex.display());
-    println!("Claude root: {}", claude.display());
-    println!("Claude settings: {}", claude_settings.display());
-    println!("Gemini root: {}", gemini.display());
+    let exists_word = |b: bool| -> &'static str {
+        match prismctl_i18n::current_locale() {
+            prismctl_i18n::Locale::ZhCN => {
+                if b { "存在" } else { "不存在" }
+            }
+            prismctl_i18n::Locale::En => {
+                if b { "yes" } else { "no" }
+            }
+        }
+    };
+
+    match prismctl_i18n::current_locale() {
+        prismctl_i18n::Locale::ZhCN => {
+            println!("Prismctl HOME: {}", home.home_dir().display());
+            println!("Codex root: {}", codex.display());
+            println!("Claude root: {}", claude.display());
+            println!("Claude settings: {}", claude_settings.display());
+            println!("Gemini root: {}", gemini.display());
+            println!();
+
+            println!("用户级文件（存在性）：");
+        }
+        prismctl_i18n::Locale::En => {
+            println!("Prismctl HOME: {}", home.home_dir().display());
+            println!("Codex root: {}", codex.display());
+            println!("Claude root: {}", claude.display());
+            println!("Claude settings: {}", claude_settings.display());
+            println!("Gemini root: {}", gemini.display());
+            println!();
+
+            println!("User-scoped files (existence):");
+        }
+    }
+
+    let claude_json = home.home_dir().join(".claude.json");
+    let codex_config = codex.join("config.toml");
+    let codex_auth = codex.join("auth.json");
+    let codex_agents = codex.join("AGENTS.md");
+    let gemini_env = gemini.join(".env");
+    let gemini_settings = gemini.join("settings.json");
+
+    println!(
+        "  - ~/.claude/settings.json: {}",
+        exists_word(claude_settings.exists())
+    );
+    println!("  - ~/.claude.json: {}", exists_word(claude_json.exists()));
+    println!("  - ~/.codex/config.toml: {}", exists_word(codex_config.exists()));
+    println!("  - ~/.codex/auth.json: {}", exists_word(codex_auth.exists()));
+    println!("  - ~/.codex/AGENTS.md: {}", exists_word(codex_agents.exists()));
+    println!("  - ~/.gemini/.env: {}", exists_word(gemini_env.exists()));
+    println!(
+        "  - ~/.gemini/settings.json: {}",
+        exists_word(gemini_settings.exists())
+    );
+    println!();
+
+    // Best-effort project context (based on current working directory).
+    // Keep it simple: existence checks only (no parsing/merging guesses).
+    let cwd = env::current_dir().ok();
+    if let Some(project_root) = cwd {
+        let mcp_json = project_root.join(".mcp.json");
+        let gemini_dir = project_root.join(".gemini");
+        let gemini_env = gemini_dir.join(".env");
+        let gemini_settings = gemini_dir.join("settings.json");
+        let gemini_md = gemini_dir.join("GEMINI.md");
+        let codex_agents = project_root.join("AGENTS.md");
+
+        match prismctl_i18n::current_locale() {
+            prismctl_i18n::Locale::ZhCN => {
+                println!("项目根目录（当前工作目录）: {}", project_root.display());
+                println!("项目级文件（存在性）：");
+            }
+            prismctl_i18n::Locale::En => {
+                println!("Project root (cwd): {}", project_root.display());
+                println!("Project-scoped files (existence):");
+            }
+        }
+
+        println!("  - .mcp.json: {}", exists_word(mcp_json.exists()));
+        println!("  - AGENTS.md: {}", exists_word(codex_agents.exists()));
+        println!("  - .gemini/.env: {}", exists_word(gemini_env.exists()));
+        println!(
+            "  - .gemini/settings.json: {}",
+            exists_word(gemini_settings.exists())
+        );
+        println!("  - .gemini/GEMINI.md: {}", exists_word(gemini_md.exists()));
+    }
 
     Ok(())
 }
@@ -303,8 +410,249 @@ pub fn cmd_claude(mut args: Vec<String>) -> Result<(), String> {
     match sub.as_str() {
         "env" => cmd_claude_env(args),
         "output-style" => cmd_claude_output_style(args),
+        "mcp" => cmd_claude_mcp(args),
         _ => Err(err_unknown_subcommand_with_help("claude", &sub)),
     }
+}
+
+fn cmd_claude_mcp(mut args: Vec<String>) -> Result<(), String> {
+    let Some(action) = args.first().cloned() else {
+        return Err(err_missing_subcommand_with_help("claude mcp"));
+    };
+    args.remove(0);
+
+    match action.as_str() {
+        "list" => cmd_claude_mcp_list(args),
+        "builtin" => cmd_claude_mcp_builtin(args),
+        "add" => cmd_claude_mcp_add(args),
+        "get" => cmd_claude_mcp_get(args),
+        "remove" => cmd_claude_mcp_remove(args),
+        _ => Err(err_unknown_subcommand_with_help("claude mcp", &action)),
+    }
+}
+
+fn parse_project_path_opt(args: &mut Vec<String>) -> Result<Option<PathBuf>, String> {
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--project-path" {
+            let v = args.get(i + 1).ok_or_else(|| {
+                crate::errors::usage(tf!(
+                    keys::ERROR_FLAG_MISSING_VALUE,
+                    "flag" => "--project-path"
+                ))
+            })?;
+            let p = PathBuf::from(v);
+            args.drain(i..=i + 1);
+            return Ok(Some(p));
+        }
+        i += 1;
+    }
+    Ok(None)
+}
+
+fn cmd_claude_mcp_list(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("claude mcp list", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+
+    // Listing is read-only; we run it immediately (no ChangeSet).
+    let envs = vec![
+        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
+        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+    ];
+    let mut cmd = std::process::Command::new("claude");
+    cmd.args(["mcp", "list"]).envs(envs);
+    if let Some(cwd) = project_path {
+        cmd.current_dir(cwd);
+    }
+    let status = cmd.status()
+        .map_err(|e| format!("执行命令失败: claude: {}", e))?;
+    if !status.success() {
+        return Err(format!("claude mcp list 失败（exit={}）", status));
+    }
+    Ok(())
+}
+
+fn cmd_claude_mcp_builtin(args: Vec<String>) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("claude mcp builtin", &args));
+    }
+    println!("内置 MCP servers（Claude Code）：");
+    for s in mcp::list_builtin_claude_mcp_servers() {
+        println!("  - {} ({})", s.id, s.transport.as_flag_value());
+        match s.transport {
+            prismctl_core::mcp::McpTransport::Stdio => {
+                let cmd = s.command.unwrap_or("<missing>");
+                let args_joined = s.args.join(" ");
+                if args_joined.is_empty() {
+                    println!("      command: {}", cmd);
+                } else {
+                    println!("      command: {} {}", cmd, args_joined);
+                }
+                if !s.env.is_empty() {
+                    let keys = s.env.iter().map(|(k, _)| *k).collect::<Vec<_>>().join(", ");
+                    println!("      env: {}", keys);
+                }
+            }
+            _ => {
+                if let Some(url) = s.url {
+                    println!("      url: {}", url);
+                }
+                if !s.headers.is_empty() {
+                    let keys = s
+                        .headers
+                        .iter()
+                        .map(|(k, _)| *k)
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    println!("      headers: {}", keys);
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+fn parse_claude_mcp_scope(args: &mut Vec<String>) -> Result<ClaudeMcpScope, String> {
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--scope" {
+            let v = args
+                .get(i + 1)
+                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let scope = match v.as_str() {
+                "local" => ClaudeMcpScope::Local,
+                "project" => ClaudeMcpScope::Project,
+                "user" => ClaudeMcpScope::User,
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_INVALID_CHOICE,
+                        "choice" => v
+                    )))
+                }
+            };
+            args.drain(i..=i + 1);
+            return Ok(scope);
+        }
+        i += 1;
+    }
+    Ok(ClaudeMcpScope::Local)
+}
+
+fn cmd_claude_mcp_add(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let scope = parse_claude_mcp_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("claude mcp add", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs =
+        mcp::plan_claude_mcp_add(&home, scope, &name, project_path).map_err(crate::errors::usage)?;
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_claude_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+fn cmd_claude_mcp_get(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("claude mcp get", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let envs = vec![
+        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
+        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+    ];
+    let mut cmd = std::process::Command::new("claude");
+    cmd.args(["mcp", "get", &name]).envs(envs);
+    if let Some(cwd) = project_path {
+        cmd.current_dir(cwd);
+    }
+    let status = cmd
+        .status()
+        .map_err(|e| format!("执行命令失败: claude: {}", e))?;
+    if !status.success() {
+        return Err(format!("claude mcp get 失败（exit={}）", status));
+    }
+    Ok(())
+}
+
+fn cmd_claude_mcp_remove(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let project_path = parse_project_path_opt(&mut args)?;
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("claude mcp remove", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = mcp::plan_claude_mcp_remove(&home, &name, project_path);
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_claude_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+pub(crate) fn danger_claude_mcp_confirmation() -> String {
+    [
+        t!(keys::DANGER_TITLE),
+        t!(keys::DANGER_CLAUDE_MCP_TYPE),
+        t!(keys::DANGER_CLAUDE_MCP_SCOPE),
+        t!(keys::DANGER_CLAUDE_MCP_RISK),
+        String::new(),
+        t!(keys::DANGER_CONFIRM_NEED_YES),
+    ]
+    .join("\n")
 }
 
 pub fn cmd_gemini(mut args: Vec<String>) -> Result<(), String> {
@@ -315,6 +663,8 @@ pub fn cmd_gemini(mut args: Vec<String>) -> Result<(), String> {
 
     match sub.as_str() {
         "env" => cmd_gemini_env(args),
+        "settings" => cmd_gemini_settings(args),
+        "mcp" => cmd_gemini_mcp(args),
         _ => Err(err_unknown_subcommand_with_help("gemini", &sub)),
     }
 }
@@ -856,11 +1206,44 @@ fn cmd_codex_agent_list(args: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum CodexAgentScope {
+    User,
+    Project,
+}
+
+fn parse_codex_agent_scope(args: &mut Vec<String>) -> Result<CodexAgentScope, String> {
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--scope" {
+            let v = args
+                .get(i + 1)
+                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let scope = match v.as_str() {
+                "user" => CodexAgentScope::User,
+                "project" => CodexAgentScope::Project,
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_INVALID_CHOICE,
+                        "choice" => v
+                    )))
+                }
+            };
+            args.drain(i..=i + 1);
+            return Ok(scope);
+        }
+        i += 1;
+    }
+    Ok(CodexAgentScope::User)
+}
+
 fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     let mode = parse_apply_mode(&mut args)?;
     let lang = parse_lang(&mut args)?;
     let yes = take_flag(&mut args, "--yes");
+    let scope = parse_codex_agent_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
 
     let name = parse_required_value(&mut args, "--name")?;
     if !args.is_empty() {
@@ -871,26 +1254,44 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
         .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_UNKNOWN_AGENT, "name" => &name)))?;
 
     let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
-    let codex_root = home.tool_root(Tool::Codex);
-    let agents_path = codex_root.join("AGENTS.md");
+
+    let (agents_path, backup_base_dir) = match scope {
+        CodexAgentScope::User => {
+            let codex_root = home.tool_root(Tool::Codex);
+            (codex_root.join("AGENTS.md"), codex_root.join("backup").join("prismctl"))
+        }
+        CodexAgentScope::Project => {
+            let root = match project_path {
+                Some(p) => normalize_path(&p),
+                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+            };
+            (
+                root.join("AGENTS.md"),
+                root.join(".prismctl").join("backup").join("prismctl"),
+            )
+        }
+    };
 
     let existing = fs::read_to_string(&agents_path).unwrap_or_default();
 
     let mut cs = ChangeSet::new();
-    cs.push(Change::CreateDirAll {
-        path: codex_root.clone(),
-    });
+    if let Some(parent) = agents_path.parent() {
+        cs.push(Change::CreateDirAll {
+            path: parent.to_path_buf(),
+        });
+    }
 
     if !existing.trim().is_empty() {
         let ts = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_err(|e| tf!(keys::ERROR_TIMESTAMP, "error" => e))?
             .as_secs();
-        let backup_path = codex_root
-            .join("backup")
-            .join("prismctl")
-            .join(ts.to_string())
-            .join("AGENTS.md");
+        let backup_path = backup_base_dir.join(ts.to_string()).join("AGENTS.md");
+        if let Some(parent) = backup_path.parent() {
+            cs.push(Change::CreateDirAll {
+                path: parent.to_path_buf(),
+            });
+        }
         cs.push(Change::WriteFile {
             path: backup_path,
             bytes: existing.as_bytes().to_vec(),
@@ -1368,13 +1769,99 @@ fn cmd_gemini_env(mut args: Vec<String>) -> Result<(), String> {
     }
 }
 
+fn cmd_gemini_settings(mut args: Vec<String>) -> Result<(), String> {
+    let Some(action) = args.first().cloned() else {
+        return Err(err_missing_subcommand_with_help("gemini settings"));
+    };
+    args.remove(0);
+
+    match action.as_str() {
+        "set" => cmd_gemini_settings_set(args),
+        _ => Err(err_unknown_subcommand_with_help("gemini settings", &action)),
+    }
+}
+
+fn cmd_gemini_mcp(mut args: Vec<String>) -> Result<(), String> {
+    let Some(action) = args.first().cloned() else {
+        return Err(err_missing_subcommand_with_help("gemini mcp"));
+    };
+    args.remove(0);
+
+    match action.as_str() {
+        "list" => cmd_gemini_mcp_list(args),
+        "builtin" => cmd_gemini_mcp_builtin(args),
+        "add" => cmd_gemini_mcp_add(args),
+        "remove" => cmd_gemini_mcp_remove(args),
+        "enable" => cmd_gemini_mcp_enable(args),
+        "disable" => cmd_gemini_mcp_disable(args),
+        _ => Err(err_unknown_subcommand_with_help("gemini mcp", &action)),
+    }
+}
+
+fn parse_gemini_mcp_scope(args: &mut Vec<String>) -> Result<prismctl_core::mcp::GeminiMcpScope, String> {
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--scope" {
+            let v = args
+                .get(i + 1)
+                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let scope = match v.as_str() {
+                "project" => prismctl_core::mcp::GeminiMcpScope::Project,
+                "user" => prismctl_core::mcp::GeminiMcpScope::User,
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_INVALID_CHOICE,
+                        "choice" => v
+                    )))
+                }
+            };
+            args.drain(i..=i + 1);
+            return Ok(scope);
+        }
+        i += 1;
+    }
+    // Follow Gemini CLI default: project scope.
+    Ok(prismctl_core::mcp::GeminiMcpScope::Project)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum GeminiScope {
+    User,
+    Project,
+}
+
+fn parse_gemini_scope(args: &mut Vec<String>) -> Result<GeminiScope, String> {
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "--scope" {
+            let v = args
+                .get(i + 1)
+                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let scope = match v.as_str() {
+                "user" => GeminiScope::User,
+                "project" => GeminiScope::Project,
+                _ => {
+                    return Err(crate::errors::usage(tf!(
+                        keys::ERROR_INVALID_CHOICE,
+                        "choice" => v
+                    )))
+                }
+            };
+            args.drain(i..=i + 1);
+            return Ok(scope);
+        }
+        i += 1;
+    }
+    Ok(GeminiScope::User)
+}
+
 fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     let mode = parse_apply_mode(&mut args)?;
+    let scope = parse_gemini_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
 
     let mut api_key: Option<String> = None;
-    let mut base_url: Option<String> = None;
-    let mut model: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -1392,36 +1879,11 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
                 );
                 args.drain(i..=i + 1);
             }
-            "--base-url" => {
-                base_url = Some(
-                    args.get(i + 1)
-                        .ok_or_else(|| {
-                            crate::errors::usage(tf!(
-                                keys::ERROR_FLAG_MISSING_VALUE,
-                                "flag" => "--base-url"
-                            ))
-                        })?
-                        .to_string(),
-                );
-                args.drain(i..=i + 1);
-            }
-            "--model" => {
-                model = Some(
-                    args.get(i + 1)
-                        .ok_or_else(|| {
-                            crate::errors::usage(
-                                tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--model"),
-                            )
-                        })?
-                        .to_string(),
-                );
-                args.drain(i..=i + 1);
-            }
             _ => i += 1,
         }
     }
 
-    if api_key.is_none() && base_url.is_none() && model.is_none() {
+    if api_key.is_none() {
         return Err(crate::errors::usage(t!(
             keys::ERROR_GEMINI_ENV_SET_NEEDS_ARGS
         )));
@@ -1431,8 +1893,20 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     }
 
     let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
-    let gemini_root = home.tool_root(Tool::GeminiCli);
-    let env_path = gemini_root.join(".env");
+    let (gemini_dir, env_path) = match scope {
+        GeminiScope::User => {
+            let root = home.tool_root(Tool::GeminiCli);
+            (root.clone(), root.join(".env"))
+        }
+        GeminiScope::Project => {
+            let root = match project_path {
+                Some(p) => normalize_path(&p),
+                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+            };
+            let dir = root.join(".gemini");
+            (dir.clone(), dir.join(".env"))
+        }
+    };
     let existing = fs::read_to_string(&env_path).unwrap_or_default();
     let start_marker = "# prismctl:start";
     let end_marker = "# prismctl:end";
@@ -1443,18 +1917,12 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     if let Some(v) = api_key {
         kv.insert("GEMINI_API_KEY".to_string(), v);
     }
-    if let Some(v) = base_url {
-        kv.insert("GOOGLE_GEMINI_BASE_URL".to_string(), v);
-    }
-    if let Some(v) = model {
-        kv.insert("GEMINI_MODEL".to_string(), v);
-    }
 
     let block = format_env_block(&kv);
     let next = upsert_managed_block(&existing, start_marker, end_marker, &block);
     let mut cs = ChangeSet::new();
     cs.push(Change::CreateDirAll {
-        path: gemini_root.clone(),
+        path: gemini_dir,
     });
     cs.push(Change::WriteFile {
         path: env_path,
@@ -1479,6 +1947,317 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     cs.apply(mode, &fs, &runner)?;
     println!("\n{}", t!(keys::APPLY_APPLIED));
     Ok(())
+}
+
+fn cmd_gemini_settings_set(mut args: Vec<String>) -> Result<(), String> {
+    use prismctl_core::gemini;
+
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let scope = parse_gemini_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+
+    let mut model: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--model" => {
+                model = Some(
+                    args.get(i + 1)
+                        .ok_or_else(|| {
+                            crate::errors::usage(tf!(
+                                keys::ERROR_FLAG_MISSING_VALUE,
+                                "flag" => "--model"
+                            ))
+                        })?
+                        .to_string(),
+                );
+                args.drain(i..=i + 1);
+            }
+            _ => i += 1,
+        }
+    }
+
+    let Some(model_name) = model else {
+        return Err(crate::errors::usage(t!(
+            keys::ERROR_GEMINI_SETTINGS_SET_NEEDS_ARGS
+        )));
+    };
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini settings set", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+
+    let (settings_dir, settings_path) = match scope {
+        GeminiScope::User => {
+            let root = home.tool_root(Tool::GeminiCli);
+            (root.clone(), root.join("settings.json"))
+        }
+        GeminiScope::Project => {
+            let root = match project_path {
+                Some(p) => normalize_path(&p),
+                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+            };
+            let dir = root.join(".gemini");
+            (dir.clone(), dir.join("settings.json"))
+        }
+    };
+
+    let existing = fs::read_to_string(&settings_path).unwrap_or_default();
+    let next = gemini::set_gemini_model_name_in_settings_json(&existing, &model_name)?;
+
+    let mut cs = ChangeSet::new();
+    cs.push(Change::CreateDirAll { path: settings_dir });
+    cs.push(Change::WriteFile {
+        path: settings_path,
+        bytes: next.into_bytes(),
+        overwrite: true,
+    });
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+fn cmd_gemini_mcp_list(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let scope = parse_gemini_mcp_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp list", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let envs = vec![
+        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
+        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+    ];
+    let mut cmd = std::process::Command::new("gemini");
+    cmd.args(["mcp", "list", "--scope", scope.as_flag_value()])
+        .envs(envs);
+    if scope == prismctl_core::mcp::GeminiMcpScope::Project {
+        if let Some(cwd) = project_path {
+            cmd.current_dir(cwd);
+        }
+    }
+    let status = cmd
+        .status()
+        .map_err(|e| format!("执行命令失败: gemini: {}", e))?;
+    if !status.success() {
+        return Err(format!("gemini mcp list 失败（exit={}）", status));
+    }
+    Ok(())
+}
+
+fn cmd_gemini_mcp_builtin(args: Vec<String>) -> Result<(), String> {
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp builtin", &args));
+    }
+    println!("内置 MCP servers（Gemini CLI）：");
+    for s in prismctl_core::mcp::list_builtin_mcp_servers() {
+        println!("  - {} ({})", s.id, s.transport.as_flag_value());
+        match s.transport {
+            prismctl_core::mcp::McpTransport::Stdio => {
+                let cmd = s.command.unwrap_or("<missing>");
+                let args_joined = s.args.join(" ");
+                if args_joined.is_empty() {
+                    println!("      command: {}", cmd);
+                } else {
+                    println!("      command: {} {}", cmd, args_joined);
+                }
+                if !s.env.is_empty() {
+                    let keys = s.env.iter().map(|(k, _)| *k).collect::<Vec<_>>().join(", ");
+                    println!("      env: {}", keys);
+                }
+            }
+            _ => {
+                if let Some(url) = s.url {
+                    println!("      url: {}", url);
+                }
+                if !s.headers.is_empty() {
+                    let keys = s
+                        .headers
+                        .iter()
+                        .map(|(k, _)| *k)
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    println!("      headers: {}", keys);
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+fn cmd_gemini_mcp_add(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let scope = parse_gemini_mcp_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp add", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = prismctl_core::mcp::plan_gemini_mcp_add(&home, scope, &name, project_path)
+        .map_err(crate::errors::usage)?;
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_gemini_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+fn cmd_gemini_mcp_remove(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let scope = parse_gemini_mcp_scope(&mut args)?;
+    let project_path = parse_project_path_opt(&mut args)?;
+
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp remove", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = prismctl_core::mcp::plan_gemini_mcp_remove(&home, scope, &name, project_path);
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_gemini_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+fn cmd_gemini_mcp_enable(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let project_path = parse_project_path_opt(&mut args)?;
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp enable", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = prismctl_core::mcp::plan_gemini_mcp_enable(&home, &name, project_path);
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_gemini_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+fn cmd_gemini_mcp_disable(mut args: Vec<String>) -> Result<(), String> {
+    let home = parse_home(&mut args)?;
+    let mode = parse_apply_mode(&mut args)?;
+    let yes = take_flag(&mut args, "--yes");
+    let project_path = parse_project_path_opt(&mut args)?;
+    let name = parse_required_value(&mut args, "--name")?;
+    if !args.is_empty() {
+        return Err(err_unsupported_args_with_help("gemini mcp disable", &args));
+    }
+
+    let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
+    let cs = prismctl_core::mcp::plan_gemini_mcp_disable(&home, &name, project_path);
+
+    let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
+    println!("{}", title);
+    for c in cs.iter() {
+        println!("  - {}", crate::icons::render_change(c));
+    }
+
+    if mode == ApplyMode::DryRun {
+        println!("\n{}", t!(keys::DRY_RUN_HINT_WRITE));
+        return Ok(());
+    }
+
+    if !yes {
+        return Err(crate::errors::usage(danger_gemini_mcp_confirmation()));
+    }
+
+    let fs = RealFileSystem;
+    let runner = RealCommandRunner;
+    cs.apply(mode, &fs, &runner)?;
+    println!("\n{}", t!(keys::APPLY_APPLIED));
+    Ok(())
+}
+
+pub(crate) fn danger_gemini_mcp_confirmation() -> String {
+    [
+        t!(keys::DANGER_TITLE),
+        t!(keys::DANGER_GEMINI_MCP_TYPE),
+        t!(keys::DANGER_GEMINI_MCP_SCOPE),
+        t!(keys::DANGER_GEMINI_MCP_RISK),
+        String::new(),
+        t!(keys::DANGER_CONFIRM_NEED_YES),
+    ]
+    .join("\n")
 }
 
 fn parse_env_block(block: &str) -> std::collections::HashMap<String, String> {
@@ -1512,7 +2291,8 @@ fn format_env_value(value: &str) -> String {
 }
 
 fn format_env_block(kv: &std::collections::HashMap<String, String>) -> String {
-    let mut keys: Vec<&str> = vec!["GOOGLE_GEMINI_BASE_URL", "GEMINI_API_KEY", "GEMINI_MODEL"];
+    // Prismctl only owns GEMINI_API_KEY for Gemini CLI; keep other keys outside the managed block.
+    let mut keys: Vec<&str> = vec!["GEMINI_API_KEY"];
     keys.retain(|k| kv.contains_key(*k));
     let mut out = String::new();
     for k in keys {
