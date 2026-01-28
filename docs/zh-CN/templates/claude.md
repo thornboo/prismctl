@@ -6,16 +6,16 @@
 ```text
 ~/.claude/
 ├── commands/
-│   └── ekko/           # Ekko 命名空间（完全受管）
+│   └── prismctl/           # Prismctl 命名空间（完全受管）
 ├── agents/
-│   └── ekko/           # Ekko 命名空间（完全受管）
-├── output-styles/      # Ekko 输出风格（完全受管）
+│   └── prismctl/           # Prismctl 命名空间（完全受管）
+├── output-styles/      # Prismctl 输出风格（完全受管）
 └── skills/             # Claude skills（由 skill 命令管理）
 ```
 
-> 提示：所有路径均可通过 `--home "<PATH>"` 或 `EKKO_HOME` 重定向到沙箱 HOME。
+> 提示：所有路径均可通过 `--home "<PATH>"` 或 `PRISMCTL_HOME` 重定向到沙箱 HOME。
 
-## 内置 commands（`commands/ekko/`）
+## 内置 commands（`commands/prismctl/`）
 
 | 模板 | 说明 |
 |------|------|
@@ -28,7 +28,7 @@
 | `feat.md` | 功能开发流程 |
 | `bmad-init.md` | BMAD 初始化（精简版） |
 
-## 内置 agents（`agents/ekko/`）
+## 内置 agents（`agents/prismctl/`）
 
 - `common/get-current-datetime.md`
 - `common/init-architect.md`
@@ -37,12 +37,12 @@
 
 ## 内置 output styles（6）
 
-- `ekko-engineer-professional`
-- `ekko-laowang-engineer`
-- `ekko-leibus-engineer`
-- `ekko-nekomata-engineer`
-- `ekko-ojousama-engineer`
-- `ekko-rem-engineer`
+- `prismctl-engineer-professional`
+- `prismctl-laowang-engineer`
+- `prismctl-leibus-engineer`
+- `prismctl-nekomata-engineer`
+- `prismctl-ojousama-engineer`
+- `prismctl-rem-engineer`
 
 ## 使用方式
 
@@ -58,7 +58,7 @@
 ### output styles
 
 ```bash
-ekko claude output-style use --name "ekko-engineer-professional" --apply
+prismctl claude output-style use --name "prismctl-engineer-professional" --apply
 ```
 
 该命令会更新 `~/.claude/settings.json` 的 `outputStyle` 字段（详见：`../commands/claude.md`）。
@@ -66,8 +66,8 @@ ekko claude output-style use --name "ekko-engineer-professional" --apply
 ### skills
 
 ```bash
-ekko skill list
-ekko skill install --name "explain-code" --apply
+prismctl skill list
+prismctl skill install --name "explain-code" --apply
 ```
 
 技能机制与目录结构说明见：`../skills/overview.md`。

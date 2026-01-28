@@ -44,21 +44,21 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          tar czvf ../../../ekko-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ekko
+          tar czvf ../../../prismctl-${{ github.ref_name }}-${{ matrix.target }}.tar.gz prismctl
           cd ../../..
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          7z a ../../../ekko-${{ github.ref_name }}-${{ matrix.target }}.zip ekko.exe
+          7z a ../../../prismctl-${{ github.ref_name }}-${{ matrix.target }}.zip prismctl.exe
           cd ../../..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ekko-${{ matrix.target }}
-          path: ekko-${{ github.ref_name }}-${{ matrix.target }}.*
+          name: prismctl-${{ matrix.target }}
+          path: prismctl-${{ github.ref_name }}-${{ matrix.target }}.*
 
   release:
     name: Create Release
@@ -100,11 +100,11 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Publish ekko-core
-        run: cargo publish -p ekko-core --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - name: Publish prismctl-core
+        run: cargo publish -p prismctl-core --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Wait for crates.io
         run: sleep 30
 
-      - name: Publish ekko
-        run: cargo publish -p ekko --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - name: Publish prismctl
+        run: cargo publish -p prismctl --token ${{ secrets.CARGO_REGISTRY_TOKEN }}

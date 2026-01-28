@@ -1,11 +1,11 @@
-# `ekko gemini`
+# `prismctl gemini`
 
 
 This page covers Gemini CLI subcommands: env configuration and managed block updates.
 
-## `ekko gemini env set`
+## `prismctl gemini env set`
 
-Write/update `~/.gemini/.env` while only maintaining an Ekko-managed block (preserves content outside the block).
+Write/update `~/.gemini/.env` while only maintaining an Prismctl-managed block (preserves content outside the block).
 
 Managed block keys:
 
@@ -14,13 +14,13 @@ Managed block keys:
 - `GEMINI_MODEL` (optional)
 
 ```bash
-ekko gemini env set [--home <PATH>] [--dry-run|--apply] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>]
+prismctl gemini env set [--home <PATH>] [--dry-run|--apply] [--api-key <VALUE>] [--base-url <VALUE>] [--model <VALUE>]
 ```
 
 Example:
 
 ```bash
-ekko gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
+prismctl gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
 ```
 
 Files written:
@@ -32,11 +32,11 @@ Managed block format (example):
 ```dotenv
 # other user-managed keys...
 
-# ekko:start
+# prismctl:start
 GOOGLE_GEMINI_BASE_URL="https://example.com"
 GEMINI_API_KEY="xxx"
 GEMINI_MODEL="gemini-2.0-flash"
-# ekko:end
+# prismctl:end
 ```
 
-> Recommendation: keep your own variables outside the Ekko-managed block to avoid being overwritten by Ekko updates.
+> Recommendation: keep your own variables outside the Prismctl-managed block to avoid being overwritten by Prismctl updates.

@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Template Management
-- **Output Styles** (6 styles): ekko-engineer-professional, ekko-laowang-engineer, ekko-leibus-engineer, ekko-nekomata-engineer, ekko-ojousama-engineer, ekko-rem-engineer
+- **Output Styles** (6 styles): prismctl-engineer-professional, prismctl-laowang-engineer, prismctl-leibus-engineer, prismctl-nekomata-engineer, prismctl-ojousama-engineer, prismctl-rem-engineer
 - **Git Workflows** (4 commands): git-commit, git-worktree, git-rollback, git-cleanBranches
 - **Workflow**: Six-phase development workflow (workflow.md)
 - **Agents** (4 agents): planner, ui-ux-designer, init-architect, get-current-datetime
@@ -32,10 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language support: zh-CN and en
 
 #### Skills Management
-- `ekko skill list` - List installed and built-in skills
-- `ekko skill install --name <NAME>` - Install built-in skill
-- `ekko skill create --name <NAME>` - Create skill template
-- `ekko skill remove --name <NAME> --apply --yes` - Remove installed skill
+- `prismctl skill list` - List installed and built-in skills
+- `prismctl skill install --name <NAME>` - Install built-in skill
+- `prismctl skill create --name <NAME>` - Create skill template
+- `prismctl skill remove --name <NAME> --apply --yes` - Remove installed skill
 - Built-in skills: explain-code, codebase-visualizer, pr-summary
 
 #### Provider Presets (Codex)
@@ -46,22 +46,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SiliconFlow preset (`--provider siliconflow`)
 
 #### Configuration Management
-- **Codex**: `ekko codex provider set` with provider presets
-- **Codex**: `ekko codex agent use` for agent selection
-- **Claude Code**: `ekko claude env set` for API configuration
-- **Claude Code**: `ekko claude output-style use` for style selection
-- **Gemini CLI**: `ekko gemini env set` for API configuration
+- **Codex**: `prismctl codex provider set` with provider presets
+- **Codex**: `prismctl codex agent use` for agent selection
+- **Claude Code**: `prismctl claude env set` for API configuration
+- **Claude Code**: `prismctl claude output-style use` for style selection
+- **Gemini CLI**: `prismctl gemini env set` for API configuration
 
 #### Installation / Upgrade
-- `ekko install --tool <...> --install-method <auto|npm|brew>` - Install supported tools
-- `ekko upgrade --tool <...> --install-method <auto|npm|brew>` - Upgrade supported tools
+- `prismctl install --tool <...> --install-method <auto|npm|brew>` - Install supported tools
+- `prismctl upgrade --tool <...> --install-method <auto|npm|brew>` - Upgrade supported tools
 
 #### Core Features
-- `ekko init --tool <all|codex|claude|gemini>` - Initialize templates
-- `ekko update --tool <all|codex|claude|gemini>` - Update templates
-- `ekko doctor` - Show resolved paths and configuration
-- `ekko project init` - Initialize project-level configuration
-- Home sandbox via `--home` or `EKKO_HOME` environment variable
+- `prismctl init --tool <all|codex|claude|gemini>` - Initialize templates
+- `prismctl update --tool <all|codex|claude|gemini>` - Update templates
+- `prismctl doctor` - Show resolved paths and configuration
+- `prismctl project init` - Initialize project-level configuration
+- Home sandbox via `--home` or `PRISMCTL_HOME` environment variable
 - Dry-run by default, `--apply` to execute changes
 - Managed block strategy for non-invasive updates
 
@@ -71,6 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Managed blocks preserve user content outside markers
 - Dangerous operations require explicit `--yes`
 
-[Unreleased]: https://github.com/thornboo/Ekko/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/thornboo/Ekko/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/thornboo/Ekko/releases/tag/v0.1.0
+[Unreleased]: https://github.com/thornboo/Prismctl/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/thornboo/Prismctl/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/thornboo/Prismctl/releases/tag/v0.1.0

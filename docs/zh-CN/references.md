@@ -25,11 +25,11 @@
 
 ### zcf
 
-Ekko 的设计思路参考了 zcf 项目：
+Prismctl 的设计思路参考了 zcf 项目：
 
 - **GitHub**：https://github.com/UfoMiao/zcf
 
-zcf 是一个 Node.js 实现的类似工具，Ekko 使用 Rust 重写以获得更好的性能和安全性。
+zcf 是一个 Node.js 实现的类似工具，Prismctl 使用 Rust 重写以获得更好的性能和安全性。
 
 ---
 
@@ -40,7 +40,7 @@ zcf 是一个 Node.js 实现的类似工具，Ekko 使用 Rust 重写以获得�
 - **serde**：https://serde.rs - 序列化框架
 - **serde_json**：https://docs.rs/serde_json - JSON 支持
 
-> 说明：当前 Ekko 只依赖 `serde` / `serde_json`。TOML 的写入采用轻量的纯文本 upsert（见 `crates/ekko-core/src/toml_text.rs`），以避免引入额外依赖并减少格式扰动。
+> 说明：当前 Prismctl 只依赖 `serde` / `serde_json`。TOML 的写入采用轻量的纯文本 upsert（见 `crates/prismctl-core/src/toml_text.rs`），以避免引入额外依赖并减少格式扰动。
 
 ---
 

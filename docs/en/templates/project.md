@@ -1,9 +1,9 @@
 # Project Templates
 
 
-`ekko project init` creates project-level workflow directories and a Gemini project memory file:
+`prismctl project init` creates project-level workflow directories and a Gemini project memory file:
 
-- `.ekko/plan/` for plans
+- `.prismctl/plan/` for plans
 - `.gemini/GEMINI.md` (managed block)
 
 Project templates are meant to make the "team workflow on disk" explicit and version-controllable.

@@ -6,16 +6,16 @@
 ```text
 ~/.claude/
 ├── commands/
-│   └── ekko/           # Ekko namespace (fully owned)
+│   └── prismctl/           # Prismctl namespace (fully owned)
 ├── agents/
-│   └── ekko/           # Ekko namespace (fully owned)
-├── output-styles/      # Ekko output styles (fully owned)
-└── skills/             # Claude skills (managed via `ekko skill`)
+│   └── prismctl/           # Prismctl namespace (fully owned)
+├── output-styles/      # Prismctl output styles (fully owned)
+└── skills/             # Claude skills (managed via `prismctl skill`)
 ```
 
-> Tip: all paths can be redirected via `--home "<PATH>"` or `EKKO_HOME`.
+> Tip: all paths can be redirected via `--home "<PATH>"` or `PRISMCTL_HOME`.
 
-## Built-in commands (`commands/ekko/`)
+## Built-in commands (`commands/prismctl/`)
 
 | Template | Description |
 |------|------|
@@ -28,7 +28,7 @@
 | `feat.md` | feature workflow |
 | `bmad-init.md` | BMAD init (trimmed) |
 
-## Built-in agents (`agents/ekko/`)
+## Built-in agents (`agents/prismctl/`)
 
 - `common/get-current-datetime.md`
 - `common/init-architect.md`
@@ -37,12 +37,12 @@
 
 ## Built-in output styles (6)
 
-- `ekko-engineer-professional`
-- `ekko-laowang-engineer`
-- `ekko-leibus-engineer`
-- `ekko-nekomata-engineer`
-- `ekko-ojousama-engineer`
-- `ekko-rem-engineer`
+- `prismctl-engineer-professional`
+- `prismctl-laowang-engineer`
+- `prismctl-leibus-engineer`
+- `prismctl-nekomata-engineer`
+- `prismctl-ojousama-engineer`
+- `prismctl-rem-engineer`
 
 ## Usage
 
@@ -58,7 +58,7 @@ Use slash commands in Claude Code (filename without `.md`):
 ### output styles
 
 ```bash
-ekko claude output-style use --name "ekko-engineer-professional" --apply
+prismctl claude output-style use --name "prismctl-engineer-professional" --apply
 ```
 
 This updates `outputStyle` in `~/.claude/settings.json` (see `../commands/claude.md`).
@@ -66,8 +66,8 @@ This updates `outputStyle` in `~/.claude/settings.json` (see `../commands/claude
 ### skills
 
 ```bash
-ekko skill list
-ekko skill install --name "explain-code" --apply
+prismctl skill list
+prismctl skill install --name "explain-code" --apply
 ```
 
 For skill structure and conventions, see: `../skills/overview.md`.

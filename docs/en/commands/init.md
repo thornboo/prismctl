@@ -1,39 +1,39 @@
-# `ekko init`
+# `prismctl init`
 
 
 Initialize built-in templates (recommended for first-time setup).
 
-It writes Ekko-managed, namespaced template files into each tool's config directory (see `../templates/index.md`). Ekko is `dry-run` by default: preview first, then add `--apply`.
+It writes Prismctl-managed, namespaced template files into each tool's config directory (see `../templates/index.md`). Prismctl is `dry-run` by default: preview first, then add `--apply`.
 
 ```bash
-ekko init --tool <codex|claude|gemini|all> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
+prismctl init --tool <codex|claude|gemini|all> [--home <PATH>] [--lang <zh-CN|en>] [--dry-run|--apply]
 ```
 
 Quick alias (hybrid):
 
 ```bash
-ekko i --tool <codex|claude|gemini|all> [--lang <zh-CN|en>] [--home <PATH>] [--dry-run|--apply]
+prismctl i --tool <codex|claude|gemini|all> [--lang <zh-CN|en>] [--home <PATH>] [--dry-run|--apply]
 ```
 
 ## What you get
 
-- Codex: `~/.codex/prompts/ekko/*` (workflow and git helpers)
-- Claude Code: `~/.claude/commands/ekko/*`, `~/.claude/agents/ekko/*`, `~/.claude/output-styles/*`
-- Gemini CLI: `~/.gemini/ekko/WORKFLOWS.md` and an Ekko-managed block in `~/.gemini/GEMINI.md`
+- Codex: `~/.codex/prompts/prismctl/*` (workflow and git helpers)
+- Claude Code: `~/.claude/commands/prismctl/*`, `~/.claude/agents/prismctl/*`, `~/.claude/output-styles/*`
+- Gemini CLI: `~/.gemini/prismctl/WORKFLOWS.md` and an Prismctl-managed block in `~/.gemini/GEMINI.md`
 
-> Note: namespaced files are fully owned by Ekko and will be overwritten by `update`. If you need long-lived customization, copy them to a non-`ekko/` location and reference your copy from the tool.
+> Note: namespaced files are fully owned by Prismctl and will be overwritten by `update`. If you need long-lived customization, copy them to a non-`prismctl/` location and reference your copy from the tool.
 
 Examples:
 
 ```bash
 # Preview all planned template writes
-ekko init --tool all
+prismctl init --tool all
 
 # Apply into a sandbox HOME
-ekko init --tool all --home "/tmp/ekko-home" --apply
+prismctl init --tool all --home "/tmp/prismctl-home" --apply
 
 # Only initialize Claude templates
-ekko init --tool claude --apply
+prismctl init --tool claude --apply
 ```
 
 See also:

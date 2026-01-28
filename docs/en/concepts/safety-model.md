@@ -1,7 +1,7 @@
 # Safety Model
 
 
-Ekko is designed with safety-first defaults to reduce the risk of accidental user config damage.
+Prismctl is designed with safety-first defaults to reduce the risk of accidental user config damage.
 
 ## 1. Dry-run by default (no writes)
 
@@ -11,19 +11,19 @@ Ekko is designed with safety-first defaults to reduce the risk of accidental use
 This lets you "rehearse" safely:
 
 ```bash
-ekko init --tool all
-ekko update --tool all
-ekko install --tool all --install-method auto
+prismctl init --tool all
+prismctl update --tool all
+prismctl install --tool all --install-method auto
 ```
 
 ## 2. HOME sandbox (recommended)
 
-Use `--home "<PATH>"` or `EKKO_HOME` to redirect all Ekko I/O into a sandbox directory:
+Use `--home "<PATH>"` or `PRISMCTL_HOME` to redirect all Prismctl I/O into a sandbox directory:
 
 ```bash
-export EKKO_HOME="/tmp/ekko-home"
-ekko update --tool all          # dry-run
-ekko update --tool all --apply  # writes into /tmp/ekko-home/.codex/.claude/.gemini
+export PRISMCTL_HOME="/tmp/prismctl-home"
+prismctl update --tool all          # dry-run
+prismctl update --tool all --apply  # writes into /tmp/prismctl-home/.codex/.claude/.gemini
 ```
 
 This is useful for:
@@ -43,14 +43,14 @@ Operations that are not safely mergeable (or are destructive) require `--yes`, f
 Typical usage:
 
 ```bash
-ekko codex agent use --name ekko-engineer-professional --apply --yes
-ekko skill remove --name my-skill --apply --yes
-ekko install --tool all --install-method auto --apply --yes
+prismctl codex agent use --name prismctl-engineer-professional --apply --yes
+prismctl skill remove --name my-skill --apply --yes
+prismctl install --tool all --install-method auto --apply --yes
 ```
 
 ## 4. Managed write strategy
 
-Ekko uses three write strategies (see `./managed-write-strategy.md`):
+Prismctl uses three write strategies (see `./managed-write-strategy.md`):
 
 - namespaced files (safe to overwrite)
 - managed blocks (preserve user content outside markers)
@@ -58,6 +58,6 @@ Ekko uses three write strategies (see `./managed-write-strategy.md`):
 
 ## 5. Traceability (plan is visible)
 
-Ekko prints every planned change (e.g. `mkdir -p ...`, `write ...`, `run brew ...`) before you apply it.
+Prismctl prints every planned change (e.g. `mkdir -p ...`, `write ...`, `run brew ...`) before you apply it.
 
 Treat the dry-run output as an audit step: confirm it looks right, then rerun with `--apply`.

@@ -1,7 +1,7 @@
 # Roadmap
 
 
-This document tracks Ekko's design principles and release plan.
+This document tracks Prismctl's design principles and release plan.
 
 ## Current status
 
@@ -9,7 +9,7 @@ This document tracks Ekko's design principles and release plan.
 
 ## v0.2.0 (planned)
 
-- Status overview commands (e.g. `ekko status`)
+- Status overview commands (e.g. `prismctl status`)
 - Backup/restore flows
 - Template listing and diffing
 - Install skills from URL/GitHub

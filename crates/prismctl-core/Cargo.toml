@@ -1,0 +1,16 @@
+[package]
+name = "prismctl-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["thornboo <thornboo@users.noreply.github.com>"]
+description = "Core library for Prismctl - unified management of AI coding tools"
+repository = "https://github.com/thornboo/prismctl"
+homepage = "https://github.com/thornboo/prismctl"
+keywords = ["cli", "ai", "codex", "claude", "gemini"]
+categories = ["command-line-utilities", "development-tools"]
+readme = "../../README.md"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

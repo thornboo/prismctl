@@ -1,7 +1,7 @@
 # Documentation Style Guide
 
 
-This page defines minimal documentation conventions for Ekko to keep docs discoverable and bilingual pages consistent.
+This page defines minimal documentation conventions for Prismctl to keep docs discoverable and bilingual pages consistent.
 
 ## Structure and locales
 

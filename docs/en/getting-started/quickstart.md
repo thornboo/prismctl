@@ -1,36 +1,36 @@
 # Quick Start
 
 
-This page assumes you already installed `ekko` (see `./installation.md`).
+This page assumes you already installed `prismctl` (see `./installation.md`).
 
 ## 0. Interactive wizard (TTY only)
 
-Run `ekko` (or `ekko config`) to enter the interactive wizard.
+Run `prismctl` (or `prismctl config`) to enter the interactive wizard.
 
 > Note: in non-TTY environments (CI / piping), interactive mode exits with an error to avoid hanging on prompts.
 
 ```bash
-ekko
+prismctl
 ```
 
 ## 1. Recommended: use a sandbox first
 
-Ekko can redirect all reads/writes into a "sandbox HOME" via `--home "<PATH>"` or `EKKO_HOME`.
+Prismctl can redirect all reads/writes into a "sandbox HOME" via `--home "<PATH>"` or `PRISMCTL_HOME`.
 
 ```bash
-export EKKO_HOME="/tmp/ekko-home"
+export PRISMCTL_HOME="/tmp/prismctl-home"
 
 # Preview planned changes (dry-run)
-ekko init --tool all
+prismctl init --tool all
 
 # Apply into sandbox directory
-ekko init --tool all --apply
+prismctl init --tool all --apply
 ```
 
-You can also use `ekko doctor` to verify the resolved paths:
+You can also use `prismctl doctor` to verify the resolved paths:
 
 ```bash
-ekko doctor
+prismctl doctor
 ```
 
 ## 2. Init / update templates (real HOME)
@@ -38,33 +38,33 @@ ekko doctor
 Once sandbox results look good, run against your real HOME:
 
 ```bash
-unset EKKO_HOME
+unset PRISMCTL_HOME
 
-ekko init --tool all          # dry-run
-ekko init --tool all --apply  # apply
+prismctl init --tool all          # dry-run
+prismctl init --tool all --apply  # apply
 ```
 
 Update templates (managed writes to avoid breaking user config):
 
 ```bash
-ekko update --tool all --apply
+prismctl update --tool all --apply
 ```
 
 Quick aliases (optional):
 
 ```bash
-ekko i --tool all --apply
-ekko u --tool all --apply
+prismctl i --tool all --apply
+prismctl u --tool all --apply
 ```
 
-> Note: `init` and `update` overwrite Ekko-managed files under the `ekko/` namespace (e.g. `~/.codex/prompts/ekko/*`). "Preserve user config" mainly means Ekko does not touch files outside its namespace, and uses managed blocks for a small set of shared files.
+> Note: `init` and `update` overwrite Prismctl-managed files under the `prismctl/` namespace (e.g. `~/.codex/prompts/prismctl/*`). "Preserve user config" mainly means Prismctl does not touch files outside its namespace, and uses managed blocks for a small set of shared files.
 
 ## 3. Configure the 3 tools
 
 ### Codex (provider)
 
 ```bash
-ekko codex provider set \
+prismctl codex provider set \
   --provider "openrouter" \
   --api-key "sk-xxx" \
   --default \
@@ -73,30 +73,30 @@ ekko codex provider set \
 
 This updates:
 
-- `~/.codex/config.toml`: upserts Ekko provider (`model_providers.ekko`)
-- `~/.codex/auth.json`: writes `EKKO_CODEX_API_KEY` (not stored in plaintext in `config.toml`)
+- `~/.codex/config.toml`: upserts Prismctl provider (`model_providers.prismctl`)
+- `~/.codex/auth.json`: writes `PRISMCTL_CODEX_API_KEY` (not stored in plaintext in `config.toml`)
 
 ### Claude Code (env / output style)
 
 ```bash
-ekko claude env set --auth-token "sk-xxx" --model "claude-sonnet-4" --apply
-ekko claude output-style use --name "ekko-engineer-professional" --apply
+prismctl claude env set --auth-token "sk-xxx" --model "claude-sonnet-4" --apply
+prismctl claude output-style use --name "prismctl-engineer-professional" --apply
 ```
 
 ### Gemini CLI (env)
 
 ```bash
-ekko gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
+prismctl gemini env set --api-key "xxx" --model "gemini-2.0-flash" --apply
 ```
 
-This maintains an Ekko-managed block inside `~/.gemini/.env` (preserves content outside the block).
+This maintains an Prismctl-managed block inside `~/.gemini/.env` (preserves content outside the block).
 
 ## 4. Project init
 
-Generate `.ekko/plan/` and `.gemini/GEMINI.md` (managed block):
+Generate `.prismctl/plan/` and `.gemini/GEMINI.md` (managed block):
 
 ```bash
-ekko project init --path "/path/to/your/project" --apply
+prismctl project init --path "/path/to/your/project" --apply
 ```
 
 See: `../projects/project-init.md`.
@@ -106,8 +106,8 @@ See: `../projects/project-init.md`.
 WARNING: Dangerous operation: requires `--apply --yes`.
 
 ```bash
-ekko install --tool all --install-method auto          # dry-run
-ekko install --tool all --install-method auto --apply --yes
+prismctl install --tool all --install-method auto          # dry-run
+prismctl install --tool all --install-method auto --apply --yes
 ```
 
 ## Next

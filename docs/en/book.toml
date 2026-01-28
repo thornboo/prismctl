@@ -1,5 +1,5 @@
 [book]
-title = "Ekko Documentation"
+title = "Prismctl Documentation"
 authors = ["thornboo"]
 language = "en"
 src = "."
@@ -10,9 +10,9 @@ build-dir = "../../book-output"
 [output.html]
 default-theme = "latte"
 preferred-dark-theme = "mocha"
-git-repository-url = "https://github.com/thornboo/Ekko"
-edit-url-template = "https://github.com/thornboo/Ekko/edit/master/docs/en/{path}"
-site-url = "/Ekko/"
+git-repository-url = "https://github.com/thornboo/prismctl"
+edit-url-template = "https://github.com/thornboo/prismctl/edit/master/docs/en/{path}"
+site-url = "/prismctl/"
 additional-css = ["./theme/catppuccin.css", "_shared/mdbook/lang-select.css"]
 additional-js = ["_shared/mdbook/lang-select.js"]
 

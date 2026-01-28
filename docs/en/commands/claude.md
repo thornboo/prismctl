@@ -1,9 +1,9 @@
-# `ekko claude`
+# `prismctl claude`
 
 
 This page covers Claude Code subcommands: env configuration and output style selection.
 
-## `ekko claude env set`
+## `prismctl claude env set`
 
 Write/update the `env` field in `~/.claude/settings.json` (a key/value map).
 
@@ -17,13 +17,13 @@ Common keys:
 - `ANTHROPIC_DEFAULT_OPUS_MODEL` (optional)
 
 ```bash
-ekko claude env set [--home <PATH>] [--dry-run|--apply] [--auth-token <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--haiku-model <VALUE>] [--sonnet-model <VALUE>] [--opus-model <VALUE>]
+prismctl claude env set [--home <PATH>] [--dry-run|--apply] [--auth-token <VALUE>] [--base-url <VALUE>] [--model <VALUE>] [--haiku-model <VALUE>] [--sonnet-model <VALUE>] [--opus-model <VALUE>]
 ```
 
 Example:
 
 ```bash
-ekko claude env set --auth-token "sk-xxx" --model "claude-sonnet-4" --apply
+prismctl claude env set --auth-token "sk-xxx" --model "claude-sonnet-4" --apply
 ```
 
 Files written:
@@ -32,18 +32,18 @@ Files written:
 
 > Tip: this command only upserts the related keys; it does not wipe other `settings.json` fields.
 
-## `ekko claude output-style use`
+## `prismctl claude output-style use`
 
 Set `outputStyle` in `~/.claude/settings.json`.
 
 ```bash
-ekko claude output-style use --name <VALUE> [--home <PATH>] [--dry-run|--apply]
+prismctl claude output-style use --name <VALUE> [--home <PATH>] [--dry-run|--apply]
 ```
 
 Example:
 
 ```bash
-ekko claude output-style use --name "ekko-engineer-professional" --apply
+prismctl claude output-style use --name "prismctl-engineer-professional" --apply
 ```
 
 For available names, see: `../templates/claude.md`.

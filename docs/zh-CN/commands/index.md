@@ -1,14 +1,14 @@
 # 命令参考
 
 
-本节是 Ekko CLI 的命令参考，按功能拆分为多个页面。
+本节是 Prismctl CLI 的命令参考，按功能拆分为多个页面。
 
 ## 通用约定（强烈建议先读）
 
-- Ekko 默认 `dry-run`：只打印计划，不会写入/删除文件，也不会执行外部命令。
+- Prismctl 默认 `dry-run`：只打印计划，不会写入/删除文件，也不会执行外部命令。
 - 只有显式传入 `--apply` 才会真正落盘或执行安装命令。
-- 通过 `--home "<PATH>"` 或环境变量 `EKKO_HOME` 可以把所有读写重定向到“沙箱 HOME”，避免污染真实配置。
-- 对不可逆/高风险操作，Ekko 额外要求 `--yes`（例如：删除 skill、全局安装/升级、覆盖 Codex 的 `AGENTS.md`）。
+- 通过 `--home "<PATH>"` 或环境变量 `PRISMCTL_HOME` 可以把所有读写重定向到“沙箱 HOME”，避免污染真实配置。
+- 对不可逆/高风险操作，Prismctl 额外要求 `--yes`（例如：删除 skill、全局安装/升级、覆盖 Codex 的 `AGENTS.md`）。
 
 ## 常用参数速查
 
@@ -27,8 +27,8 @@
 
 ## 基础命令
 
-- `ekko` / `ekko config`：交互式向导入口（仅 TTY）
-- `config <CMD> ...`：镜像前缀（`ekko config <CMD> ...` ≡ `ekko <CMD> ...`）
+- `prismctl` / `prismctl config`：交互式向导入口（仅 TTY）
+- `config <CMD> ...`：镜像前缀（`prismctl config <CMD> ...` ≡ `prismctl <CMD> ...`）
 - `i`：quick init（混合模式）
 - `u`：quick update
 - `doctor`：`./doctor.md`

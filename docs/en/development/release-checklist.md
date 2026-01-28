@@ -14,24 +14,24 @@ cargo build --release
 
 ## 2. Sandbox smoke test (recommended)
 
-Use `--home` or `EKKO_HOME` to isolate all writes into a temporary directory.
+Use `--home` or `PRISMCTL_HOME` to isolate all writes into a temporary directory.
 
 ```bash
-export EKKO_HOME="/tmp/ekko-release-test"
-rm -rf "$EKKO_HOME"
-mkdir -p "$EKKO_HOME"
+export PRISMCTL_HOME="/tmp/prismctl-release-test"
+rm -rf "$PRISMCTL_HOME"
+mkdir -p "$PRISMCTL_HOME"
 
-ekko doctor
-ekko init --tool all --home "$EKKO_HOME" --apply
+prismctl doctor
+prismctl init --tool all --home "$PRISMCTL_HOME" --apply
 
 # Skills
-ekko skill list --home "$EKKO_HOME"
-ekko skill install --name explain-code --home "$EKKO_HOME" --apply
+prismctl skill list --home "$PRISMCTL_HOME"
+prismctl skill install --name explain-code --home "$PRISMCTL_HOME" --apply
 
 # Providers / env
-ekko codex provider set --provider openrouter --api-key "test-key" --home "$EKKO_HOME" --apply
-ekko claude env set --auth-token "test-token" --home "$EKKO_HOME" --apply
-ekko gemini env set --api-key "test-gemini-key" --home "$EKKO_HOME" --apply
+prismctl codex provider set --provider openrouter --api-key "test-key" --home "$PRISMCTL_HOME" --apply
+prismctl claude env set --auth-token "test-token" --home "$PRISMCTL_HOME" --apply
+prismctl gemini env set --api-key "test-gemini-key" --home "$PRISMCTL_HOME" --apply
 ```
 
 ## 3. Version consistency

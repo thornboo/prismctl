@@ -1,14 +1,14 @@
 # Command Reference
 
 
-This section documents Ekko CLI commands, split by feature area.
+This section documents Prismctl CLI commands, split by feature area.
 
 ## Conventions (read this first)
 
-- Ekko is `dry-run` by default: it prints the plan but does not write/delete files, and does not execute external commands.
+- Prismctl is `dry-run` by default: it prints the plan but does not write/delete files, and does not execute external commands.
 - Only `--apply` performs real writes / installations.
-- Use `--home "<PATH>"` or `EKKO_HOME` to redirect all I/O into a sandbox HOME.
-- For irreversible/high-risk operations, Ekko requires an explicit `--yes` (e.g. removing a skill, global install/upgrade, overwriting Codex `AGENTS.md`).
+- Use `--home "<PATH>"` or `PRISMCTL_HOME` to redirect all I/O into a sandbox HOME.
+- For irreversible/high-risk operations, Prismctl requires an explicit `--yes` (e.g. removing a skill, global install/upgrade, overwriting Codex `AGENTS.md`).
 
 ## Common Flags
 
@@ -27,8 +27,8 @@ This section documents Ekko CLI commands, split by feature area.
 
 ## Basics
 
-- `ekko` / `ekko config`: interactive wizard (TTY only)
-- `config <CMD> ...`: mirror prefix (`ekko config <CMD> ...` ≡ `ekko <CMD> ...`)
+- `prismctl` / `prismctl config`: interactive wizard (TTY only)
+- `config <CMD> ...`: mirror prefix (`prismctl config <CMD> ...` ≡ `prismctl <CMD> ...`)
 - `i`: quick init (hybrid)
 - `u`: quick update
 - `doctor`: `./doctor.md`

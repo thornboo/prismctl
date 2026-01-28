@@ -1,4 +1,4 @@
-# `ekko install` / `ekko upgrade`
+# `prismctl install` / `prismctl upgrade`
 
 
 全局安装/升级 AI 工具（Codex / Claude Code / Gemini CLI）。
@@ -8,8 +8,8 @@
 ## 语法
 
 ```bash
-ekko install --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
-ekko upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
+prismctl install --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
+prismctl upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
 ```
 
 ## 安装方式
@@ -20,7 +20,7 @@ ekko upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>]
 
 ## 实际会执行什么
 
-Ekko 不会直接下载二进制，而是调用你机器上的包管理器：
+Prismctl 不会直接下载二进制，而是调用你机器上的包管理器：
 
 - npm：`npm install -g <package>@latest`
 - brew：`brew install <name>` / `brew upgrade <name>`（cask/formula 取决于工具）
@@ -38,10 +38,10 @@ Ekko 不会直接下载二进制，而是调用你机器上的包管理器：
 
 ```bash
 # 预览安装计划
-ekko install --tool all --install-method auto
+prismctl install --tool all --install-method auto
 
 # 实际执行
-ekko install --tool all --install-method auto --apply --yes
+prismctl install --tool all --install-method auto --apply --yes
 ```
 
 建议流程：

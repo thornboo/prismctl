@@ -1,4 +1,4 @@
-# `ekko install` / `ekko upgrade`
+# `prismctl install` / `prismctl upgrade`
 
 
 Install/upgrade AI tools globally (Codex / Claude Code / Gemini CLI).
@@ -8,8 +8,8 @@ Install/upgrade AI tools globally (Codex / Claude Code / Gemini CLI).
 ## Syntax
 
 ```bash
-ekko install --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
-ekko upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
+prismctl install --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
+prismctl upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>] [--dry-run|--apply] [--yes]
 ```
 
 ## Install methods
@@ -18,9 +18,9 @@ ekko upgrade --tool <codex|claude|gemini|all> [--install-method <auto|npm|brew>]
 - `brew`: install via Homebrew (macOS)
 - `auto`: prefer brew on macOS, otherwise npm
 
-## What Ekko actually runs
+## What Prismctl actually runs
 
-Ekko does not download binaries itself; it calls your local package manager:
+Prismctl does not download binaries itself; it calls your local package manager:
 
 - npm: `npm install -g <package>@latest`
 - brew: `brew install <name>` / `brew upgrade <name>` (cask/formula depends on the tool)
@@ -38,10 +38,10 @@ Make sure `npm` or `brew` is installed and available in your `PATH`.
 
 ```bash
 # Preview
-ekko install --tool all --install-method auto
+prismctl install --tool all --install-method auto
 
 # Apply
-ekko install --tool all --install-method auto --apply --yes
+prismctl install --tool all --install-method auto --apply --yes
 ```
 
 Recommended workflow:

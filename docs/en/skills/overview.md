@@ -1,7 +1,7 @@
 # Skills
 
 
-Ekko `skill` subcommands manage Claude Code skills under `~/.claude/skills/`.
+Prismctl `skill` subcommands manage Claude Code skills under `~/.claude/skills/`.
 
 Skills are a lightweight extension mechanism in Claude Code: each skill is a directory that contains at least `SKILL.md` (typically with YAML frontmatter).
 
@@ -10,7 +10,7 @@ Skills are a lightweight extension mechanism in Claude Code: each skill is a dir
 - Dry-run by default (no writes)
 - Use `--apply` to write/delete
 - Removal is dangerous and requires `--yes`
-- Use `--home "/tmp/ekko-home"` to practice in a sandbox first
+- Use `--home "/tmp/prismctl-home"` to practice in a sandbox first
 
 ## Directory conventions
 
@@ -35,7 +35,7 @@ description: Explain code with diagrams and actionable notes
 
 ## Built-in skills
 
-Ekko ships 3 built-in skills:
+Prismctl ships 3 built-in skills:
 
 - `explain-code`
 - `codebase-visualizer`
@@ -46,10 +46,10 @@ Install path: `~/.claude/skills/<name>/`
 ## Common commands
 
 ```bash
-ekko skill list
-ekko skill install --name "explain-code" --apply
-ekko skill create --name "my-skill" --apply
-ekko skill remove --name "my-skill" --apply --yes
+prismctl skill list
+prismctl skill install --name "explain-code" --apply
+prismctl skill create --name "my-skill" --apply
+prismctl skill remove --name "my-skill" --apply --yes
 ```
 
 Full syntax: `../commands/skill.md`.

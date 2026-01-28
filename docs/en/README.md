@@ -1,6 +1,6 @@
-# Ekko Documentation
+# Prismctl Documentation
 
-Ekko is a Rust CLI for unified management of AI coding tools (Codex, Claude Code, Gemini CLI): templates, workflows, and configuration.
+Prismctl is a Rust CLI for unified management of AI coding tools (Codex, Claude Code, Gemini CLI): templates, workflows, and configuration.
 
 If you're new here, a good reading order is:
 

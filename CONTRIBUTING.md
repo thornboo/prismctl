@@ -1,9 +1,9 @@
 # Contributing
 
-Thanks for your interest in Ekko! This repository is a Rust workspace with:
+Thanks for your interest in Prismctl! This repository is a Rust workspace with:
 
-- `crates/ekko-core`: core library (business logic)
-- `crates/ekko-cli`: CLI binary (`ekko`)
+- `crates/prismctl-core`: core library (business logic)
+- `crates/prismctl-cli`: CLI binary (`prismctl`)
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ cargo lint
 cargo testall
 
 # Run locally
-cargo run -p ekko -- --help
+cargo run -p prismctl -- --help
 ```
 
 ## Code Guidelines (Excerpt)

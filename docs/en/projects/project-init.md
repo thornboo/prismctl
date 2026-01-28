@@ -1,30 +1,30 @@
 # Project Init
 
 
-`ekko project init` creates Ekko's project workflow directories and initializes Gemini CLI project memory.
+`prismctl project init` creates Prismctl's project workflow directories and initializes Gemini CLI project memory.
 
 ## Quick usage
 
 ```bash
 # Run in project root (dry-run)
 cd "/path/to/your/project"
-ekko project init
+prismctl project init
 
 # Apply
-ekko project init --apply
+prismctl project init --apply
 
 # Target another directory
-ekko project init --path "/path/to/other/project" --apply
+prismctl project init --path "/path/to/other/project" --apply
 
 # Use English templates
-ekko project init --lang en --apply
+prismctl project init --lang en --apply
 ```
 
 ## What it creates
 
 ```text
 <project>/
-├── .ekko/
+├── .prismctl/
 │   └── plan/
 │       ├── current/        # active plans
 │       ├── history/        # archived plans
@@ -35,17 +35,17 @@ ekko project init --lang en --apply
 
 ### `.gemini/GEMINI.md` (managed block)
 
-If the file already exists, Ekko only updates the content between markers and preserves everything else:
+If the file already exists, Prismctl only updates the content between markers and preserves everything else:
 
 ```markdown
-<!-- ekko:start -->
-Ekko-managed project context...
-<!-- ekko:end -->
+<!-- prismctl:start -->
+Prismctl-managed project context...
+<!-- prismctl:end -->
 ```
 
 ## Why this exists
 
-- **Consistent plan locations**: built-in workflows reference `.ekko/plan/*`.
+- **Consistent plan locations**: built-in workflows reference `.prismctl/plan/*`.
 - **Team-shared context**: `.gemini/GEMINI.md` can be committed to share project memory.
 - **Traceability**: archived plans under `history/` help future contributors understand decisions.
 

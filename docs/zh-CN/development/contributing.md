@@ -1,7 +1,7 @@
 # 贡献指南（中文）
 
 
-感谢你对 Ekko 项目的兴趣！本文档说明如何参与开发。
+感谢你对 Prismctl 项目的兴趣！本文档说明如何参与开发。
 
 ## 开发环境
 
@@ -13,8 +13,8 @@
 ### 克隆和构建
 
 ```bash
-git clone https://github.com/thornboo/ekko.git
-cd ekko
+git clone https://github.com/thornboo/prismctl.git
+cd prismctl
 cargo build
 ```
 
@@ -41,10 +41,10 @@ cargo fmt --all
 ## 项目结构
 
 ```text
-Ekko/
+Prismctl/
 ├── crates/
-│   ├── ekko-cli/       # CLI 入口
-│   └── ekko-core/      # 核心业务逻辑
+│   ├── prismctl-cli/       # CLI 入口
+│   └── prismctl-core/      # 核心业务逻辑
 ├── docs/               # 文档
 └── tests/              # 集成测试（规划中）
 ```
@@ -82,11 +82,11 @@ git checkout -b feature/your-feature-name
 - 使用 `///` 格式
 
 ```rust,ignore
-/// 发现并解析 Ekko HOME 目录。
+/// 发现并解析 Prismctl HOME 目录。
 ///
 /// # 优先级
 /// 1. 显式传入的 `home` 参数
-/// 2. 环境变量 `EKKO_HOME`
+/// 2. 环境变量 `PRISMCTL_HOME`
 /// 3. 系统 HOME 目录
 ///
 /// # 错误
@@ -152,7 +152,7 @@ Closes #123
 ```rust,ignore
 // Good: English, concise, at key points
 fn discover(home: Option<PathBuf>) -> Result<Self> {
-    // Priority: CLI arg > EKKO_HOME > HOME
+    // Priority: CLI arg > PRISMCTL_HOME > HOME
     ...
 }
 
@@ -186,8 +186,8 @@ fn foo() -> Result<(), String> {
 }
 
 // Future (recommended)
-fn foo() -> Result<(), EkkoError> {
-    Err(EkkoError::InvalidArgument("...".into()))
+fn foo() -> Result<(), PrismctlError> {
+    Err(PrismctlError::InvalidArgument("...".into()))
 }
 ```
 
@@ -222,26 +222,26 @@ use super::...;         // 父模块
 
 ### 添加新命令
 
-1. **在 ekko-core 中实现业务逻辑**：
+1. **在 prismctl-core 中实现业务逻辑**：
 
 ```rust,ignore
-// crates/ekko-core/src/new_feature.rs
-pub fn plan_new_feature(home: &EkkoHome) -> ChangeSet {
+// crates/prismctl-core/src/new_feature.rs
+pub fn plan_new_feature(home: &PrismctlHome) -> ChangeSet {
     let mut cs = ChangeSet::new();
     // 添加变更...
     cs
 }
 ```
 
-2. **在 ekko-cli 中添加命令处理**：
+2. **在 prismctl-cli 中添加命令处理**：
 
 ```rust,ignore
-// crates/ekko-cli/src/main.rs
+// crates/prismctl-cli/src/main.rs
 fn cmd_new_feature(mut args: Vec<String>) -> Result<(), String> {
     let home = parse_home(&mut args)?;
     let mode = parse_apply_mode(&mut args)?;
 
-    let home = EkkoHome::discover(home)?;
+    let home = PrismctlHome::discover(home)?;
     let cs = new_feature::plan_new_feature(&home);
 
     // 执行变更...
@@ -262,7 +262,7 @@ fn help() -> String {
 
 ### 添加新模板
 
-1. 在 `crates/ekko-core/assets/<tool>/<lang>/` 创建模板文件
+1. 在 `crates/prismctl-core/assets/<tool>/<lang>/` 创建模板文件
 2. 在 `templates.rs` 中使用 `include_str!` 引入
 3. 在 `plan_templates_*` 函数中添加写入逻辑
 4. 更新 `docs/zh-CN/templates/index.md` + `docs/en/templates/index.md`
@@ -298,7 +298,7 @@ mod tests {
 #[test]
 fn test_with_sandbox() {
     let temp_dir = tempfile::tempdir().unwrap();
-    let home = EkkoHome::discover(Some(temp_dir.path().to_path_buf())).unwrap();
+    let home = PrismctlHome::discover(Some(temp_dir.path().to_path_buf())).unwrap();
 
     // 测试逻辑...
 }
@@ -335,7 +335,7 @@ docs/
 
 ## 获取帮助
 
-- 提交 Issue：https://github.com/thornboo/ekko/issues
+- 提交 Issue：https://github.com/thornboo/prismctl/issues
 - 阅读文档：本目录下的其他文档
 
 感谢你的贡献！

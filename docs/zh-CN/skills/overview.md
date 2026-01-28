@@ -1,7 +1,7 @@
 # Skills
 
 
-Ekko 的 `skill` 子命令用于管理 Claude Code 的 skills 目录：`~/.claude/skills/`。
+Prismctl 的 `skill` 子命令用于管理 Claude Code 的 skills 目录：`~/.claude/skills/`。
 
 Skills 是 Claude Code 的可插拔扩展机制：每个 skill 以一个目录存在，目录中至少包含 `SKILL.md`（通常带 YAML frontmatter）。
 
@@ -10,7 +10,7 @@ Skills 是 Claude Code 的可插拔扩展机制：每个 skill 以一个目录�
 - 默认 `--dry-run`：只打印将执行的变更，不落盘
 - 传入 `--apply` 才会写入/删除
 - 删除是危险操作：必须额外传入 `--yes`
-- 推荐先用 `--home "/tmp/ekko-home"` 沙箱演练
+- 推荐先用 `--home "/tmp/prismctl-home"` 沙箱演练
 
 ## 目录结构约定
 
@@ -35,7 +35,7 @@ description: Explain code with diagrams and actionable notes
 
 ## 内置 skills
 
-Ekko 内置 3 个 skills，可直接安装：
+Prismctl 内置 3 个 skills，可直接安装：
 
 - `explain-code`
 - `codebase-visualizer`
@@ -46,10 +46,10 @@ Ekko 内置 3 个 skills，可直接安装：
 ## 常用命令
 
 ```bash
-ekko skill list
-ekko skill install --name "explain-code" --apply
-ekko skill create --name "my-skill" --apply
-ekko skill remove --name "my-skill" --apply --yes
+prismctl skill list
+prismctl skill install --name "explain-code" --apply
+prismctl skill create --name "my-skill" --apply
+prismctl skill remove --name "my-skill" --apply --yes
 ```
 
 完整语法见：`../commands/skill.md`。

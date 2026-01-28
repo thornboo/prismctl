@@ -1,7 +1,7 @@
 # 发展路线图
 
 
-本文档包含 Ekko 项目的设计原则、功能规划和行动计划。
+本文档包含 Prismctl 项目的设计原则、功能规划和行动计划。
 
 ---
 
@@ -11,14 +11,14 @@
 
 ## 核心设计原则
 
-Ekko 必须遵循以下原则：
+Prismctl 必须遵循以下原则：
 
 | 原则 | 说明 | 实践 |
 |------|------|------|
 | **干净** | 不留垃圾文件，卸载后无残留 | 所有文件写入明确的命名空间 |
-| **一键配置** | 单命令完成所有设置 | `ekko init --tool all --apply` |
+| **一键配置** | 单命令完成所有设置 | `prismctl init --tool all --apply` |
 | **轻量级** | 最小依赖，快速启动 | 仅 serde/serde_json，无运行时 |
-| **非侵入式** | 不修改用户现有配置 | 仅管理 `ekko/` 命名空间，受管块保留用户内容 |
+| **非侵入式** | 不修改用户现有配置 | 仅管理 `prismctl/` 命名空间，受管块保留用户内容 |
 | **配置文件清晰** | 人类可读，易于调试 | JSON/TOML 格式化输出，有注释 |
 
 ---
@@ -29,7 +29,7 @@ Ekko 必须遵循以下原则：
 
 ```text
 BMAD-METHOD (31.8k ⭐) ─────┐
-claude-code-router ────────┼──→ zcf (5.3k ⭐) ──→ Ekko
+claude-code-router ────────┼──→ zcf (5.3k ⭐) ──→ Prismctl
 CCometixLine ──────────────┘
 ```
 
@@ -51,15 +51,15 @@ CCometixLine ──────────────┘
 ### 核心功能
 
 ```text
-Ekko v0.1.0
+Prismctl v0.1.0
 ├── 模板管理
 │   ├── Output Styles (6个)
-│   │   ├── ekko-engineer-professional
-│   │   ├── ekko-laowang-engineer
-│   │   ├── ekko-leibus-engineer
-│   │   ├── ekko-nekomata-engineer
-│   │   ├── ekko-ojousama-engineer
-│   │   └── ekko-rem-engineer
+│   │   ├── prismctl-engineer-professional
+│   │   ├── prismctl-laowang-engineer
+│   │   ├── prismctl-leibus-engineer
+│   │   ├── prismctl-nekomata-engineer
+│   │   ├── prismctl-ojousama-engineer
+│   │   └── prismctl-rem-engineer
 │   ├── Git Workflows (4个)
 │   │   ├── git-commit
 │   │   ├── git-worktree
@@ -76,10 +76,10 @@ Ekko v0.1.0
 │       └── feat
 │
 ├── Skills 管理 ⭐ 核心功能
-│   ├── ekko skill list          # 列出已安装 skills
-│   ├── ekko skill install       # 安装 skill
-│   ├── ekko skill create        # 创建 skill 模板
-│   └── ekko skill remove        # 删除 skill（危险操作）
+│   ├── prismctl skill list          # 列出已安装 skills
+│   ├── prismctl skill install       # 安装 skill
+│   ├── prismctl skill create        # 创建 skill 模板
+│   └── prismctl skill remove        # 删除 skill（危险操作）
 │
 ├── 配置管理
 │   ├── Claude Code
@@ -105,7 +105,7 @@ Ekko v0.1.0
 
 ### Skills 功能设计
 
-Skills 是 Claude Code 的轻量级扩展机制，Ekko 需要支持管理它们。
+Skills 是 Claude Code 的轻量级扩展机制，Prismctl 需要支持管理它们。
 
 **存储位置**：
 ```text
@@ -120,19 +120,19 @@ Skills 是 Claude Code 的轻量级扩展机制，Ekko 需要支持管理它们�
 
 ```bash
 # 列出已安装的 skills
-ekko skill list
+prismctl skill list
 
 # 安装内置 skill
-ekko skill install --name <NAME> [--dry-run|--apply] [--home <PATH>]
+prismctl skill install --name <NAME> [--dry-run|--apply] [--home <PATH>]
 
 # 从 URL 安装（未来）
-# ekko skill install --url <URL> [--dry-run|--apply] [--home <PATH>]
+# prismctl skill install --url <URL> [--dry-run|--apply] [--home <PATH>]
 
 # 创建 skill 模板
-ekko skill create --name <NAME> [--dry-run|--apply] [--home <PATH>]
+prismctl skill create --name <NAME> [--dry-run|--apply] [--home <PATH>]
 
 # 删除 skill
-ekko skill remove --name <NAME> --apply --yes [--home <PATH>]
+prismctl skill remove --name <NAME> --apply --yes [--home <PATH>]
 ```
 
 **内置 Skills**（v0.1.0）：
@@ -145,16 +145,16 @@ ekko skill remove --name <NAME> --apply --yes [--home <PATH>]
 ## v0.2.0 功能规划
 
 ```text
-Ekko v0.2.0
+Prismctl v0.2.0
 ├── 状态管理
-│   ├── ekko status              # 配置状态总览
-│   ├── ekko backup              # 备份配置
-│   └── ekko restore             # 恢复配置
+│   ├── prismctl status              # 配置状态总览
+│   ├── prismctl backup              # 备份配置
+│   └── prismctl restore             # 恢复配置
 │
 ├── 模板增强
-│   ├── ekko template list       # 列出所有模板
-│   ├── ekko template show       # 查看模板内容
-│   └── ekko diff                # 本地与模板差异
+│   ├── prismctl template list       # 列出所有模板
+│   ├── prismctl template show       # 查看模板内容
+│   └── prismctl diff                # 本地与模板差异
 │
 └── Skills 增强
     └── 从 GitHub/URL 安装
@@ -165,9 +165,9 @@ Ekko v0.2.0
 ## v0.3.0 功能规划
 
 ```text
-Ekko v0.3.0
+Prismctl v0.3.0
 ├── 分发
-│   ├── Homebrew tap (thornboo/homebrew-ekko)
+│   ├── Homebrew tap (thornboo/homebrew-prismctl)
 │   └── 更多平台支持
 │
 ├── 架构优化
@@ -188,7 +188,7 @@ Ekko v0.3.0
 ```rust,ignore
 // Good: English, concise, at key points
 fn discover(home: Option<PathBuf>) -> Result<Self> {
-    // Priority: CLI arg > EKKO_HOME > HOME
+    // Priority: CLI arg > PRISMCTL_HOME > HOME
     ...
 }
 
@@ -226,7 +226,7 @@ fn apply_changeset() { }
 fn install_skill() { }
 
 // Types: PascalCase
-struct EkkoHome { }
+struct PrismctlHome { }
 enum ApplyMode { }
 
 // Constants: SCREAMING_SNAKE_CASE
@@ -252,9 +252,9 @@ const DEFAULT_LANG: &str = "zh-CN";
 
 **验收标准**：
 - `cargo build` 成功
-- `ekko init --tool all` 生成所有模板
-- `ekko skill list` 正常列出内置/已安装 skills
-- `ekko skill install --name explain-code --apply` 安装成功
+- `prismctl init --tool all` 生成所有模板
+- `prismctl skill list` 正常列出内置/已安装 skills
+- `prismctl skill install --name explain-code --apply` 安装成功
 
 ### Phase 2：服务商和测试（1-2 周）
 
@@ -301,7 +301,7 @@ const DEFAULT_LANG: &str = "zh-CN";
 
 | 渠道 | 优先级 | 说明 |
 |------|--------|------|
-| Homebrew tap | P1 | 需创建 `thornboo/homebrew-ekko` 仓库 |
+| Homebrew tap | P1 | 需创建 `thornboo/homebrew-prismctl` 仓库 |
 | homebrew-core | P2 | 需 75+ stars，成熟后考虑 |
 
 ### 发布检查清单

@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 set -eu
 
-OWNER="${EKKO_GITHUB_OWNER:-thornboo}"
-REPO="${EKKO_GITHUB_REPO:-ekko}"
-VERSION="${EKKO_VERSION:-latest}"
-INSTALL_DIR="${EKKO_INSTALL_DIR:-"$HOME/.local/bin"}"
-NO_VERIFY="${EKKO_NO_VERIFY:-0}"
+OWNER="${PRISMCTL_GITHUB_OWNER:-thornboo}"
+REPO="${PRISMCTL_GITHUB_REPO:-prismctl}"
+VERSION="${PRISMCTL_VERSION:-latest}"
+INSTALL_DIR="${PRISMCTL_INSTALL_DIR:-"$HOME/.local/bin"}"
+NO_VERIFY="${PRISMCTL_NO_VERIFY:-0}"
 
 fail() {
   echo "error: $*" >&2
@@ -67,7 +67,7 @@ detect_target() {
       case "$arch" in
         x86_64) echo "x86_64-unknown-linux-gnu" ;;
         *)
-          fail "unsupported linux arch: $arch (try: cargo install ekko)"
+          fail "unsupported linux arch: $arch (try: cargo install prismctl)"
           ;;
       esac
       ;;
@@ -103,11 +103,11 @@ trap 'rm -rf "$TMPDIR"' EXIT INT TERM
 TARGET="$(detect_target)"
 TAG="$(resolve_tag "$VERSION")"
 
-ARCHIVE="ekko-$TAG-$TARGET.tar.gz"
+ARCHIVE="prismctl-$TAG-$TARGET.tar.gz"
 BASE_URL="https://github.com/$OWNER/$REPO/releases/download/$TAG"
 ARCHIVE_URL="$BASE_URL/$ARCHIVE"
 
-echo "Installing ekko $TAG ($TARGET) to $INSTALL_DIR"
+echo "Installing prismctl $TAG ($TARGET) to $INSTALL_DIR"
 
 mkdir -p "$INSTALL_DIR"
 
@@ -130,16 +130,16 @@ if [ "$NO_VERIFY" != "1" ]; then
 fi
 
 tar -xzf "$TMPDIR/$ARCHIVE" -C "$TMPDIR"
-[ -f "$TMPDIR/ekko" ] || fail "archive did not contain expected binary: ekko"
+[ -f "$TMPDIR/prismctl" ] || fail "archive did not contain expected binary: prismctl"
 
 if command_exists install; then
-  install -m 0755 "$TMPDIR/ekko" "$INSTALL_DIR/ekko"
+  install -m 0755 "$TMPDIR/prismctl" "$INSTALL_DIR/prismctl"
 else
-  cp "$TMPDIR/ekko" "$INSTALL_DIR/ekko"
-  chmod 0755 "$INSTALL_DIR/ekko"
+  cp "$TMPDIR/prismctl" "$INSTALL_DIR/prismctl"
+  chmod 0755 "$INSTALL_DIR/prismctl"
 fi
 
-echo "Done: $INSTALL_DIR/ekko"
-if ! command_exists ekko; then
+echo "Done: $INSTALL_DIR/prismctl"
+if ! command_exists prismctl; then
   echo "Note: '$INSTALL_DIR' may not be on your PATH." >&2
 fi

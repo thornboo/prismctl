@@ -1,8 +1,8 @@
 [workspace]
 members = [
-  "crates/ekko-cli",
-  "crates/ekko-core",
-  "crates/ekko-i18n",
+  "crates/prismctl-cli",
+  "crates/prismctl-core",
+  "crates/prismctl-i18n",
 ]
 
 resolver = "2"
@@ -11,4 +11,4 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/thornboo/ekko"
+repository = "https://github.com/thornboo/prismctl"

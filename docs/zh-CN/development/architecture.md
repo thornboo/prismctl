@@ -1,18 +1,18 @@
 # 架构概览
 
 
-本文档面向贡献者和二次开发者，描述 Ekko 的代码结构与关键抽象。
+本文档面向贡献者和二次开发者，描述 Prismctl 的代码结构与关键抽象。
 
 ## Workspace 布局
 
 ```text
-Ekko/
+Prismctl/
 ├── Cargo.toml              # Workspace 配置
 ├── crates/
-│   ├── ekko-cli/           # CLI 入口
+│   ├── prismctl-cli/           # CLI 入口
 │   │   ├── Cargo.toml
 │   │   └── src/main.rs
-│   └── ekko-core/          # 核心业务逻辑
+│   └── prismctl-core/          # 核心业务逻辑
 │       ├── Cargo.toml
 │       ├── src/
 │       │   ├── lib.rs
@@ -34,10 +34,10 @@ Ekko/
 
 | Crate | 职责 |
 |-------|------|
-| `ekko-cli` | 命令解析、参数验证、输出格式化、dry-run/apply 流程编排 |
-| `ekko-core` | 纯业务逻辑、路径解析、变更集、模板渲染、安装计划 |
+| `prismctl-cli` | 命令解析、参数验证、输出格式化、dry-run/apply 流程编排 |
+| `prismctl-core` | 纯业务逻辑、路径解析、变更集、模板渲染、安装计划 |
 
-**设计原则**：`ekko-core` 不依赖任何 CLI 框架，可被其他上游调用。
+**设计原则**：`prismctl-core` 不依赖任何 CLI 框架，可被其他上游调用。
 
 ---
 
@@ -45,7 +45,7 @@ Ekko/
 
 ### 1. HOME 沙箱
 
-通过 `--home "<PATH>"` 或 `EKKO_HOME` 环境变量，将所有工具配置目录的读写重定向到沙箱：
+通过 `--home "<PATH>"` 或 `PRISMCTL_HOME` 环境变量，将所有工具配置目录的读写重定向到沙箱：
 
 ```text
 原始路径              沙箱路径
@@ -54,17 +54,17 @@ Ekko/
 ~/.gemini/    →      <sandbox>/.gemini/
 ```
 
-**实现位置**：`crates/ekko-core/src/paths.rs`
+**实现位置**：`crates/prismctl-core/src/paths.rs`
 
 ```rust,ignore
-pub struct EkkoHome {
+pub struct PrismctlHome {
     home_dir: PathBuf,
 }
 
-impl EkkoHome {
+impl PrismctlHome {
     /// HOME 发现优先级：
     /// 1. 显式传入的 home 参数
-    /// 2. EKKO_HOME 环境变量
+    /// 2. PRISMCTL_HOME 环境变量
     /// 3. HOME 环境变量（Unix）
     /// 4. USERPROFILE 环境变量（Windows）
     pub fn discover(home: Option<PathBuf>) -> Result<Self, String>;
@@ -77,7 +77,7 @@ impl EkkoHome {
 
 所有写入/执行行为先被建模为 `ChangeSet`，再通过 `ApplyMode` 控制是否真正执行：
 
-**实现位置**：`crates/ekko-core/src/changeset.rs`
+**实现位置**：`crates/prismctl-core/src/changeset.rs`
 
 ```rust,ignore
 pub enum Change {
@@ -106,25 +106,25 @@ pub enum ApplyMode {
 模板文件以 `include_str!` 打包进二进制，`init`/`update` 生成对应 `ChangeSet`：
 
 **实现位置**：
-- `crates/ekko-core/src/templates.rs`
-- `crates/ekko-core/assets/`
+- `crates/prismctl-core/src/templates.rs`
+- `crates/prismctl-core/assets/`
 
 ```rust,ignore
-pub fn plan_templates_codex(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
-pub fn plan_templates_claude(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
-pub fn plan_templates_gemini(home: &EkkoHome, lang: TemplateLang) -> ChangeSet;
+pub fn plan_templates_codex(home: &PrismctlHome, lang: TemplateLang) -> ChangeSet;
+pub fn plan_templates_claude(home: &PrismctlHome, lang: TemplateLang) -> ChangeSet;
+pub fn plan_templates_gemini(home: &PrismctlHome, lang: TemplateLang) -> ChangeSet;
 ```
 
 **资源目录结构**：
 ```text
 assets/
 ├── claude/
-│   ├── agents/ekko/zh-CN/
-│   ├── commands/ekko/zh-CN/
+│   ├── agents/prismctl/zh-CN/
+│   ├── commands/prismctl/zh-CN/
 │   └── output-styles/zh-CN/
 ├── codex/
 │   ├── agents/zh-CN/
-│   └── prompts/ekko/zh-CN/
+│   └── prompts/prismctl/zh-CN/
 └── gemini/
     └── zh-CN/
 ```
@@ -133,7 +133,7 @@ assets/
 
 对需要保留用户内容的文件，采用标记块替换：
 
-**实现位置**：`crates/ekko-core/src/managed_block.rs`
+**实现位置**：`crates/prismctl-core/src/managed_block.rs`
 
 ```rust,ignore
 pub fn upsert_managed_block(
@@ -154,9 +154,9 @@ pub fn extract_managed_block(
 ```markdown
 用户自定义内容...
 
-<!-- ekko:start -->
-Ekko 管理的内容（会被更新）
-<!-- ekko:end -->
+<!-- prismctl:start -->
+Prismctl 管理的内容（会被更新）
+<!-- prismctl:end -->
 
 用户自定义内容...
 ```
@@ -178,7 +178,7 @@ Ekko 管理的内容（会被更新）
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│                      ekko-cli                           │
+│                      prismctl-cli                           │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │                   CLI Layer                      │   │
 │  │    命令解析 → 参数验证 → 调用 core → 输出结果    │   │
@@ -187,7 +187,7 @@ Ekko 管理的内容（会被更新）
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────┐
-│                      ekko-core                          │
+│                      prismctl-core                          │
 │                                                         │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
 │  │ ChangeSet│  │ Templates│  │ Installer│              │
@@ -216,9 +216,9 @@ Ekko 管理的内容（会被更新）
 ### init/update 命令
 
 ```text
-用户输入                    ekko-core                    文件系统
+用户输入                    prismctl-core                    文件系统
    │                           │                            │
-   │  ekko update --tool all   │                            │
+   │  prismctl update --tool all   │                            │
    │ ─────────────────────────>│                            │
    │                           │                            │
    │                     plan_templates_*()                 │
@@ -235,7 +235,7 @@ Ekko 管理的内容（会被更新）
 ### codex provider set 命令
 
 ```text
-用户输入                    ekko-core                    文件系统
+用户输入                    prismctl-core                    文件系统
    │                           │                            │
    │  --base-url --model       │                            │
    │ ─────────────────────────>│                            │
@@ -290,8 +290,8 @@ pub trait CommandRunner {
 
 ### 添加新命令
 
-1. 在 `ekko-core` 中实现业务逻辑，返回 `ChangeSet`
-2. 在 `ekko-cli` 中添加命令解析和调用
+1. 在 `prismctl-core` 中实现业务逻辑，返回 `ChangeSet`
+2. 在 `prismctl-cli` 中添加命令解析和调用
 
 ### 添加新模板
 

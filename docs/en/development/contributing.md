@@ -8,8 +8,8 @@ This section is a quick entry point for contributors. Full guidelines live in th
 ## Local setup (quick)
 
 ```bash
-git clone "https://github.com/thornboo/ekko.git"
-cd "ekko"
+git clone "https://github.com/thornboo/prismctl.git"
+cd "prismctl"
 cargo build
 ```
 

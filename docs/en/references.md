@@ -32,7 +32,7 @@
 - serde: https://serde.rs
 - serde_json: https://docs.rs/serde_json
 
-> Note: Ekko currently only depends on `serde` / `serde_json`. TOML updates are implemented as lightweight text upserts (see `crates/ekko-core/src/toml_text.rs`) to keep dependencies minimal and avoid unintended formatting changes.
+> Note: Prismctl currently only depends on `serde` / `serde_json`. TOML updates are implemented as lightweight text upserts (see `crates/prismctl-core/src/toml_text.rs`) to keep dependencies minimal and avoid unintended formatting changes.
 
 ## Config locations
 
