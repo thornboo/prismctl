@@ -34,7 +34,8 @@ error-lang-value-unsupported = 不支持的 --lang 值: { $value }
 error-install-method-value-unsupported = 不支持的 --install-method 值: { $value }
 error-codex-provider-set-needs-args = codex provider set 需要至少传入一个参数：--provider/--api-key/--base-url/--model/--wire-api/--default
 error-claude-env-set-needs-args = claude env set 需要至少传入一个参数：--auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
-error-gemini-env-set-needs-args = gemini env set 需要至少传入一个参数：--api-key/--base-url/--model
+error-gemini-env-set-needs-args = gemini env set 需要传入：--api-key
+error-gemini-settings-set-needs-args = gemini settings set 需要传入：--model
 
 # skill name validation (prismctl-core)
 error-skill-name-empty = skill 名称不能为空
@@ -85,7 +86,7 @@ codex-provider-preset = 使用 provider 预设: { $provider }
 codex-auth-key-hidden = 将写入 Codex auth.json 键: PRISMCTL_CODEX_API_KEY（值已隐藏）
 claude-auth-token-hidden = 将写入 Claude settings.json env 键: ANTHROPIC_AUTH_TOKEN（值已隐藏）
 claude-output-style-set = 将 Claude 的 outputStyle 设置为: { $name }
-gemini-env-managed-keys = 将管理 Gemini 环境变量块（keys）：GEMINI_API_KEY, GOOGLE_GEMINI_BASE_URL, GEMINI_MODEL
+gemini-env-managed-keys = 将管理 Gemini 环境变量块（keys）：GEMINI_API_KEY
 
 skill-builtin-title = 内置 skills：
 skill-installed-title = 已安装 skills：
@@ -108,3 +109,11 @@ danger-install-op-upgrade = 全局升级
 danger-codex-agent-type = 操作类型：覆盖 Codex 系统提示文件（AGENTS.md）
 danger-codex-agent-scope = 影响范围：将改变 Codex 的全局系统提示/输出风格
 danger-codex-agent-risk = 风险评估：可能覆盖你当前自定义提示；已自动计划备份（如存在旧文件）
+
+danger-claude-mcp-type = 操作类型：修改 Claude Code MCP 配置
+danger-claude-mcp-scope = 影响范围：将调用 claude mcp 写入 MCP server 配置（可能影响 ~/.claude.json 或项目 .mcp.json）
+danger-claude-mcp-risk = 风险评估：可能覆盖同名 MCP server 配置；建议先 dry-run 预览
+
+danger-gemini-mcp-type = 操作类型：修改 Gemini CLI MCP 配置
+danger-gemini-mcp-scope = 影响范围：将调用 gemini mcp 写入 MCP server 配置（可能影响 ~/.gemini/settings.json 或项目 .gemini/settings.json），以及 enable/disable 状态文件
+danger-gemini-mcp-risk = 风险评估：可能覆盖同名 MCP server 配置；建议先 dry-run 预览

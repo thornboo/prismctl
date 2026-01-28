@@ -34,7 +34,8 @@ error-lang-value-unsupported = Unsupported --lang value: { $value }
 error-install-method-value-unsupported = Unsupported --install-method value: { $value }
 error-codex-provider-set-needs-args = codex provider set requires at least one of: --provider/--api-key/--base-url/--model/--wire-api/--default
 error-claude-env-set-needs-args = claude env set requires at least one of: --auth-token/--base-url/--model/--haiku-model/--sonnet-model/--opus-model
-error-gemini-env-set-needs-args = gemini env set requires at least one of: --api-key/--base-url/--model
+error-gemini-env-set-needs-args = gemini env set requires: --api-key
+error-gemini-settings-set-needs-args = gemini settings set requires: --model
 
 # skill name validation (prismctl-core)
 error-skill-name-empty = Skill name cannot be empty
@@ -85,7 +86,7 @@ codex-provider-preset = Using provider preset: { $provider }
 codex-auth-key-hidden = Will write Codex auth.json key: PRISMCTL_CODEX_API_KEY (value hidden)
 claude-auth-token-hidden = Will write Claude settings.json env key: ANTHROPIC_AUTH_TOKEN (value hidden)
 claude-output-style-set = Set Claude outputStyle to: { $name }
-gemini-env-managed-keys = Managing Gemini env block keys: GEMINI_API_KEY, GOOGLE_GEMINI_BASE_URL, GEMINI_MODEL
+gemini-env-managed-keys = Managing Gemini env block keys: GEMINI_API_KEY
 
 skill-builtin-title = Built-in skills:
 skill-installed-title = Installed skills:
@@ -108,3 +109,11 @@ danger-install-op-upgrade = global upgrade
 danger-codex-agent-type = Operation: overwrite Codex system prompt file (AGENTS.md)
 danger-codex-agent-scope = Scope: changes Codex global system prompt/output style
 danger-codex-agent-risk = Risk: may overwrite your custom prompt; a backup is planned if an old file exists
+
+danger-claude-mcp-type = Operation: modify Claude Code MCP configuration
+danger-claude-mcp-scope = Scope: will call `claude mcp` to write MCP server configuration (may affect ~/.claude.json or project .mcp.json)
+danger-claude-mcp-risk = Risk: may overwrite same-name MCP server config; consider running dry-run first
+
+danger-gemini-mcp-type = Operation: modify Gemini CLI MCP configuration
+danger-gemini-mcp-scope = Scope: will call `gemini mcp` to write MCP server configuration (may affect ~/.gemini/settings.json or project .gemini/settings.json) and enable/disable state file
+danger-gemini-mcp-risk = Risk: may overwrite same-name MCP server config; consider running dry-run first

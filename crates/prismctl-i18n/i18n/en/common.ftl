@@ -1,6 +1,6 @@
 # Common text
 app-name = Prismctl
-app-subtitle = Interactive Setup Wizard
+app-subtitle = Zero-Config Code Flow
 
 # Common actions
 action-continue = Press Enter to continue...

@@ -1,6 +1,6 @@
 # 通用文本
 app-name = Prismctl
-app-subtitle = 交互式设置向导
+app-subtitle = Zero-Config Code Flow
 
 # 通用操作
 action-continue = 按回车继续...
