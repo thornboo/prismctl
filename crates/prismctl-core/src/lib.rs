@@ -1,8 +1,10 @@
 pub mod changeset;
 pub mod claude;
 pub mod codex;
+pub mod gemini;
 pub mod installer;
 pub mod json_text;
+pub mod mcp;
 pub mod managed_block;
 pub mod paths;
 pub mod project;

@@ -417,7 +417,13 @@ mod tests {
 
     struct NoopRunner;
     impl CommandRunner for NoopRunner {
-        fn run(&self, _program: &str, _args: &[String]) -> io::Result<ExitStatus> {
+        fn run(
+            &self,
+            _program: &str,
+            _args: &[String],
+            _cwd: Option<&std::path::Path>,
+            _env: &[(String, String)],
+        ) -> io::Result<ExitStatus> {
             Err(io::Error::other("noop"))
         }
     }

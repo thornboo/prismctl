@@ -87,6 +87,8 @@ fn plan_npm(tool: ToolInstallTarget, action: InstallAction) -> ChangeSet {
     cs.push(Change::RunCommand {
         program: "npm".to_string(),
         args,
+        cwd: None,
+        env: Vec::new(),
     });
     cs
 }
@@ -110,6 +112,8 @@ fn plan_brew(tool: ToolInstallTarget, action: InstallAction) -> ChangeSet {
     cs.push(Change::RunCommand {
         program: "brew".to_string(),
         args,
+        cwd: None,
+        env: Vec::new(),
     });
     cs
 }

@@ -28,6 +28,8 @@ pub enum Change {
     RunCommand {
         program: String,
         args: Vec<String>,
+        cwd: Option<PathBuf>,
+        env: Vec<(String, String)>,
     },
 }
 
@@ -45,16 +47,52 @@ impl fmt::Display for Change {
                     write!(f, "write-if-missing {}", quote_path(path))
                 }
             }
-            Change::RunCommand { program, args } => {
+            Change::RunCommand {
+                program,
+                args,
+                cwd,
+                env,
+            } => {
                 let rendered_args = args
                     .iter()
                     .map(|a| quote_arg(a))
                     .collect::<Vec<_>>()
                     .join(" ");
-                if rendered_args.is_empty() {
-                    write!(f, "run {}", quote_arg(program))
+                let rendered_cwd = cwd
+                    .as_ref()
+                    .map(|p| format!("cwd={}", quote_path(p)))
+                    .unwrap_or_default();
+                let rendered_env = if env.is_empty() {
+                    String::new()
                 } else {
-                    write!(f, "run {} {}", quote_arg(program), rendered_args)
+                    let pairs = env
+                        .iter()
+                        .map(|(k, v)| {
+                            let redacted = redact_env_value(k, v);
+                            format!("{}={}", k, quote_arg(&redacted))
+                        })
+                        .collect::<Vec<_>>()
+                        .join(" ");
+                    format!("env={}", pairs)
+                };
+
+                let mut meta = Vec::new();
+                if !rendered_cwd.is_empty() {
+                    meta.push(rendered_cwd);
+                }
+                if !rendered_env.is_empty() {
+                    meta.push(rendered_env);
+                }
+                let meta = if meta.is_empty() {
+                    String::new()
+                } else {
+                    format!(" ({})", meta.join(" "))
+                };
+
+                if rendered_args.is_empty() {
+                    write!(f, "run{} {}", meta, quote_arg(program))
+                } else {
+                    write!(f, "run{} {} {}", meta, quote_arg(program), rendered_args)
                 }
             }
         }
@@ -78,6 +116,15 @@ fn quote_arg(arg: &str) -> String {
     }
     let escaped = arg.replace('\\', "\\\\").replace('"', "\\\"");
     format!("\"{}\"", escaped)
+}
+
+fn redact_env_value(key: &str, value: &str) -> String {
+    // Best-effort redaction for display: do not leak secrets in change previews.
+    let k = key.to_ascii_uppercase();
+    if k.contains("KEY") || k.contains("TOKEN") || k.contains("SECRET") || k.contains("PASSWORD") {
+        return "<redacted>".to_string();
+    }
+    value.to_string()
 }
 
 #[derive(Debug, Default, Clone)]
@@ -138,8 +185,13 @@ impl ChangeSet {
                         } => fs
                             .write_file(path, bytes, *overwrite)
                             .map_err(|e| format!("写入文件失败: {}: {}", path.display(), e))?,
-                        Change::RunCommand { program, args } => runner
-                            .run(program, args)
+                        Change::RunCommand {
+                            program,
+                            args,
+                            cwd,
+                            env,
+                        } => runner
+                            .run(program, args, cwd.as_deref(), env)
                             .map(|_| ())
                             .map_err(|e| format!("执行命令失败: {}: {}", program, e))?,
                     }
@@ -191,15 +243,35 @@ impl FileSystem for RealFileSystem {
 }
 
 pub trait CommandRunner {
-    fn run(&self, program: &str, args: &[String]) -> io::Result<ExitStatus>;
+    fn run(
+        &self,
+        program: &str,
+        args: &[String],
+        cwd: Option<&Path>,
+        env: &[(String, String)],
+    ) -> io::Result<ExitStatus>;
 }
 
 /// Real command runner implementation for applying changes.
 pub struct RealCommandRunner;
 
 impl CommandRunner for RealCommandRunner {
-    fn run(&self, program: &str, args: &[String]) -> io::Result<ExitStatus> {
-        Command::new(program).args(args).status()
+    fn run(
+        &self,
+        program: &str,
+        args: &[String],
+        cwd: Option<&Path>,
+        env: &[(String, String)],
+    ) -> io::Result<ExitStatus> {
+        let mut cmd = Command::new(program);
+        cmd.args(args);
+        if let Some(dir) = cwd {
+            cmd.current_dir(dir);
+        }
+        if !env.is_empty() {
+            cmd.envs(env.iter().cloned());
+        }
+        cmd.status()
     }
 }
 
@@ -258,7 +330,13 @@ mod tests {
 
     struct NoopRunner;
     impl CommandRunner for NoopRunner {
-        fn run(&self, _program: &str, _args: &[String]) -> io::Result<ExitStatus> {
+        fn run(
+            &self,
+            _program: &str,
+            _args: &[String],
+            _cwd: Option<&Path>,
+            _env: &[(String, String)],
+        ) -> io::Result<ExitStatus> {
             Err(io::Error::other(
                 "runner should not be invoked in these tests",
             ))
