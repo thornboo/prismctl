@@ -74,6 +74,15 @@ jobs:
         with:
           path: artifacts
 
+      - name: Generate checksums
+        run: |
+          set -euo pipefail
+          find artifacts -type f \( -name "*.tar.gz" -o -name "*.zip" \) -print0 | while IFS= read -r -d '' file; do
+            dir="$(dirname "$file")"
+            base="$(basename "$file")"
+            (cd "$dir" && sha256sum "$base" > "$base.sha256")
+          done
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:

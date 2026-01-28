@@ -53,6 +53,20 @@ lang = "en"
 cargo install ekko
 ```
 
+### Shell install (GitHub Releases)
+
+This installs the latest release binary to `~/.local/bin`:
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/thornboo/ekko/HEAD/install.sh" | sh
+```
+
+Custom install dir:
+
+```bash
+EKKO_INSTALL_DIR="$HOME/bin" curl -fsSL "https://raw.githubusercontent.com/thornboo/ekko/HEAD/install.sh" | sh
+```
+
 ### From source
 
 ```bash
