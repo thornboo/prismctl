@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Claude Code**: `prismctl claude mcp ...` (delegates to `claude mcp`) to manage MCP servers with a built-in catalog
+- **Codex**: `prismctl codex agent use --scope <user|project>` to support project-scoped `AGENTS.md` (with backups)
+- **Gemini CLI**: `prismctl gemini settings set` to upsert `model.name` in `settings.json`
+- **Gemini CLI**: `prismctl gemini mcp ...` (delegates to `gemini mcp`) to manage MCP servers with a built-in catalog
+
+### Changed
+- **Gemini CLI**: `prismctl gemini env set` now only manages `GEMINI_API_KEY` inside a Prismctl-managed block (supports user/project scope)
+- **doctor**: now reports both user-level and project-level configuration presence (based on current working directory)
+
 ## [0.1.1] - 2026-01-27
 
 ### Added

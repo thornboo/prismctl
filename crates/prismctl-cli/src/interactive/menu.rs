@@ -57,10 +57,7 @@ pub fn run() -> Result<(), String> {
             MainMenuItem::Help,
             MainMenuItem::Exit,
         ];
-        let default_index = options
-            .iter()
-            .position(|c| *c == last_choice)
-            .unwrap_or(0);
+        let default_index = options.iter().position(|c| *c == last_choice).unwrap_or(0);
         let choice = prompt_select(&menu_title, options, default_index)?;
         last_choice = choice;
 
@@ -318,8 +315,11 @@ fn gemini_mcp_menu() -> Result<(), String> {
                 let scope_title = t!(keys::MENU_GEMINI_MCP_SCOPE_TITLE);
                 let scope_project = t!(keys::MENU_GEMINI_MCP_SCOPE_PROJECT);
                 let scope_user = t!(keys::MENU_GEMINI_MCP_SCOPE_USER);
-                let scope_choice =
-                    prompt_select(&scope_title, vec![scope_project.clone(), scope_user.clone()], 0)?;
+                let scope_choice = prompt_select(
+                    &scope_title,
+                    vec![scope_project.clone(), scope_user.clone()],
+                    0,
+                )?;
                 let scope_flag = if scope_choice == scope_user {
                     "user"
                 } else {
@@ -376,8 +376,11 @@ fn gemini_mcp_menu() -> Result<(), String> {
                 let scope_title = t!(keys::MENU_GEMINI_MCP_SCOPE_TITLE);
                 let scope_project = t!(keys::MENU_GEMINI_MCP_SCOPE_PROJECT);
                 let scope_user = t!(keys::MENU_GEMINI_MCP_SCOPE_USER);
-                let scope_choice =
-                    prompt_select(&scope_title, vec![scope_project.clone(), scope_user.clone()], 0)?;
+                let scope_choice = prompt_select(
+                    &scope_title,
+                    vec![scope_project.clone(), scope_user.clone()],
+                    0,
+                )?;
                 let scope_flag = if scope_choice == scope_user {
                     "user"
                 } else {
@@ -441,8 +444,11 @@ fn gemini_mcp_menu() -> Result<(), String> {
                 let scope_title = t!(keys::MENU_GEMINI_MCP_SCOPE_TITLE);
                 let scope_project = t!(keys::MENU_GEMINI_MCP_SCOPE_PROJECT);
                 let scope_user = t!(keys::MENU_GEMINI_MCP_SCOPE_USER);
-                let scope_choice =
-                    prompt_select(&scope_title, vec![scope_project.clone(), scope_user.clone()], 0)?;
+                let scope_choice = prompt_select(
+                    &scope_title,
+                    vec![scope_project.clone(), scope_user.clone()],
+                    0,
+                )?;
                 let scope_flag = if scope_choice == scope_user {
                     "user"
                 } else {
@@ -566,12 +572,23 @@ fn gemini_env_configure() -> Result<(), String> {
     let scope_title = t!(keys::MENU_GEMINI_ENV_SCOPE_TITLE);
     let scope_user = t!(keys::MENU_GEMINI_ENV_SCOPE_USER);
     let scope_project = t!(keys::MENU_GEMINI_ENV_SCOPE_PROJECT);
-    let scope_choice = prompt_select(&scope_title, vec![scope_user.clone(), scope_project.clone()], 0)?;
+    let scope_choice = prompt_select(
+        &scope_title,
+        vec![scope_user.clone(), scope_project.clone()],
+        0,
+    )?;
     let (scope_flag, project_path) = if scope_choice == scope_project {
         let p = t!(keys::MENU_GEMINI_ENV_PROJECT_PATH_PROMPT);
         let raw = prompt_line(&p)?;
         let v = raw.trim();
-        ("project", if v.is_empty() { None } else { Some(v.to_string()) })
+        (
+            "project",
+            if v.is_empty() {
+                None
+            } else {
+                Some(v.to_string())
+            },
+        )
     } else {
         ("user", None)
     };
@@ -626,12 +643,23 @@ fn gemini_settings_configure() -> Result<(), String> {
     let scope_title = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_TITLE);
     let scope_user = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_USER);
     let scope_project = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_PROJECT);
-    let scope_choice = prompt_select(&scope_title, vec![scope_user.clone(), scope_project.clone()], 0)?;
+    let scope_choice = prompt_select(
+        &scope_title,
+        vec![scope_user.clone(), scope_project.clone()],
+        0,
+    )?;
     let (scope_flag, project_path) = if scope_choice == scope_project {
         let p = t!(keys::MENU_GEMINI_SETTINGS_PROJECT_PATH_PROMPT);
         let raw = prompt_line(&p)?;
         let v = raw.trim();
-        ("project", if v.is_empty() { None } else { Some(v.to_string()) })
+        (
+            "project",
+            if v.is_empty() {
+                None
+            } else {
+                Some(v.to_string())
+            },
+        )
     } else {
         ("user", None)
     };
@@ -708,7 +736,10 @@ fn codex_provider_configure() -> Result<(), String> {
 
     // Provider set can be done without a key (e.g. relying on env).
     let api_key_prompt = t!(keys::WIZARD_CODEX_PROMPT_API_KEY);
-    let api_key = prompt_secret_with_env_default(&api_key_prompt, &["PRISMCTL_CODEX_API_KEY", "PRISMCTL_API_KEY"])?;
+    let api_key = prompt_secret_with_env_default(
+        &api_key_prompt,
+        &["PRISMCTL_CODEX_API_KEY", "PRISMCTL_API_KEY"],
+    )?;
     if let Some(k) = &api_key {
         crate::interactive::utils::validate_api_key_format(k)?;
     }
@@ -786,8 +817,11 @@ fn codex_agent_configure() -> Result<(), String> {
     let scope_title = t!(keys::MENU_CODEX_AGENT_SCOPE_TITLE);
     let scope_user = t!(keys::MENU_CODEX_AGENT_SCOPE_USER);
     let scope_project = t!(keys::MENU_CODEX_AGENT_SCOPE_PROJECT);
-    let scope_choice =
-        prompt_select(&scope_title, vec![scope_user.clone(), scope_project.clone()], 0)?;
+    let scope_choice = prompt_select(
+        &scope_title,
+        vec![scope_user.clone(), scope_project.clone()],
+        0,
+    )?;
     let scope_flag = if scope_choice == scope_project {
         "project"
     } else {
@@ -932,7 +966,11 @@ fn claude_mcp_menu() -> Result<(), String> {
                 let scope_user = t!(keys::MENU_CLAUDE_MCP_SCOPE_USER);
                 let scope_choice = prompt_select(
                     &scope_title,
-                    vec![scope_local.clone(), scope_project.clone(), scope_user.clone()],
+                    vec![
+                        scope_local.clone(),
+                        scope_project.clone(),
+                        scope_user.clone(),
+                    ],
                     0,
                 )?;
                 let scope_flag = if scope_choice == scope_project {

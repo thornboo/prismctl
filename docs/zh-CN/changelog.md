@@ -8,6 +8,16 @@
 
 ## [未发布]
 
+### 新增
+- **Claude Code**：`prismctl claude mcp ...`（委托 `claude mcp`）管理 MCP servers（内置 catalog）
+- **Codex**：`prismctl codex agent use --scope <user|project>`，支持项目级 `AGENTS.md`（并自动备份）
+- **Gemini CLI**：`prismctl gemini settings set`，在 `settings.json` 中 upsert `model.name`
+- **Gemini CLI**：`prismctl gemini mcp ...`（委托 `gemini mcp`）管理 MCP servers（内置 catalog）
+
+### 变更
+- **Gemini CLI**：`prismctl gemini env set` 现在只管理受管块中的 `GEMINI_API_KEY`（支持 user/project scope）
+- **doctor**：同时输出用户级与项目级配置存在性（项目级基于当前工作目录）
+
 ## [0.1.1] - 2026-01-27
 
 ### 新增

@@ -1,6 +1,6 @@
 use crate::interactive::utils::{
-    prompt_confirm, prompt_line, prompt_multi_select, prompt_optional, prompt_secret_with_env_default,
-    prompt_select, validate_api_key_format,
+    prompt_confirm, prompt_line, prompt_multi_select, prompt_optional,
+    prompt_secret_with_env_default, prompt_select, validate_api_key_format,
 };
 use crate::legacy;
 use prismctl_core::mcp;
@@ -28,12 +28,23 @@ pub fn wizard_configure_gemini() -> Result<(), String> {
         let title = t!(keys::MENU_GEMINI_ENV_SCOPE_TITLE);
         let user = t!(keys::MENU_GEMINI_ENV_SCOPE_USER);
         let project = t!(keys::MENU_GEMINI_ENV_SCOPE_PROJECT);
-        let choice = crate::interactive::utils::prompt_select(&title, vec![user.clone(), project.clone()], 0)?;
+        let choice = crate::interactive::utils::prompt_select(
+            &title,
+            vec![user.clone(), project.clone()],
+            0,
+        )?;
         if choice == project {
             let p = t!(keys::MENU_GEMINI_ENV_PROJECT_PATH_PROMPT);
             let raw = crate::interactive::utils::prompt_line(&p)?;
             let v = raw.trim();
-            ("project", if v.is_empty() { None } else { Some(v.to_string()) })
+            (
+                "project",
+                if v.is_empty() {
+                    None
+                } else {
+                    Some(v.to_string())
+                },
+            )
         } else {
             ("user", None)
         }
@@ -46,12 +57,23 @@ pub fn wizard_configure_gemini() -> Result<(), String> {
         let title = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_TITLE);
         let user = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_USER);
         let project = t!(keys::MENU_GEMINI_SETTINGS_SCOPE_PROJECT);
-        let choice = crate::interactive::utils::prompt_select(&title, vec![user.clone(), project.clone()], 0)?;
+        let choice = crate::interactive::utils::prompt_select(
+            &title,
+            vec![user.clone(), project.clone()],
+            0,
+        )?;
         if choice == project {
             let p = t!(keys::MENU_GEMINI_SETTINGS_PROJECT_PATH_PROMPT);
             let raw = crate::interactive::utils::prompt_line(&p)?;
             let v = raw.trim();
-            ("project", if v.is_empty() { None } else { Some(v.to_string()) })
+            (
+                "project",
+                if v.is_empty() {
+                    None
+                } else {
+                    Some(v.to_string())
+                },
+            )
         } else {
             ("user", None)
         }
@@ -148,9 +170,16 @@ pub fn wizard_configure_gemini() -> Result<(), String> {
             let scope_title = t!(keys::WIZARD_GEMINI_MCP_SCOPE_TITLE);
             let scope_project = t!(keys::WIZARD_GEMINI_MCP_SCOPE_PROJECT);
             let scope_user = t!(keys::WIZARD_GEMINI_MCP_SCOPE_USER);
-            let scope_choice =
-                prompt_select(&scope_title, vec![scope_project.clone(), scope_user.clone()], 0)?;
-            let scope_flag = if scope_choice == scope_user { "user" } else { "project" };
+            let scope_choice = prompt_select(
+                &scope_title,
+                vec![scope_project.clone(), scope_user.clone()],
+                0,
+            )?;
+            let scope_flag = if scope_choice == scope_user {
+                "user"
+            } else {
+                "project"
+            };
 
             let project_path = if scope_flag == "project" {
                 let p = t!(keys::WIZARD_GEMINI_MCP_PROJECT_PATH_PROMPT);

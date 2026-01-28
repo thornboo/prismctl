@@ -1,7 +1,10 @@
 use serde_json::Value;
 use std::collections::BTreeMap;
 
-pub fn set_gemini_model_name_in_settings_json(existing: &str, model_name: &str) -> Result<String, String> {
+pub fn set_gemini_model_name_in_settings_json(
+    existing: &str,
+    model_name: &str,
+) -> Result<String, String> {
     let mut root = if existing.trim().is_empty() {
         Value::Object(Default::default())
     } else {
@@ -61,4 +64,3 @@ mod tests {
         assert!(out.contains("\"name\": \"gemini-2.5-pro\""));
     }
 }
-

@@ -152,13 +152,14 @@ pub fn plan_claude_mcp_add(
     let def = builtin_mcp_server(server_id)
         .ok_or_else(|| format!("未知 MCP server: {}（内置）", server_id))?;
 
-    let mut args: Vec<String> = Vec::new();
-    args.push("mcp".to_string());
-    args.push("add".to_string());
-    args.push("--transport".to_string());
-    args.push(def.transport.as_flag_value().to_string());
-    args.push("--scope".to_string());
-    args.push(scope.as_flag_value().to_string());
+    let mut args: Vec<String> = vec![
+        "mcp".to_string(),
+        "add".to_string(),
+        "--transport".to_string(),
+        def.transport.as_flag_value().to_string(),
+        "--scope".to_string(),
+        scope.as_flag_value().to_string(),
+    ];
 
     // Options must come before the server name.
     for (k, v) in def.headers.iter() {

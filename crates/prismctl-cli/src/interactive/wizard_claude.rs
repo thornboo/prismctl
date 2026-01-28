@@ -1,6 +1,6 @@
 use crate::interactive::utils::{
-    prompt_confirm, prompt_line, prompt_optional, prompt_required, prompt_secret_with_env_default,
-    prompt_multi_select, prompt_select, validate_api_key_format, validate_http_url,
+    prompt_confirm, prompt_line, prompt_multi_select, prompt_optional, prompt_required,
+    prompt_secret_with_env_default, prompt_select, validate_api_key_format, validate_http_url,
 };
 use crate::legacy;
 use prismctl_core::mcp;
@@ -149,7 +149,11 @@ pub fn wizard_configure_claude() -> Result<(), String> {
             let scope_user = t!(keys::WIZARD_CLAUDE_MCP_SCOPE_USER);
             let scope_choice = prompt_select(
                 &scope_title,
-                vec![scope_local.clone(), scope_project.clone(), scope_user.clone()],
+                vec![
+                    scope_local.clone(),
+                    scope_project.clone(),
+                    scope_user.clone(),
+                ],
                 0,
             )?;
             let scope_flag = if scope_choice == scope_project {

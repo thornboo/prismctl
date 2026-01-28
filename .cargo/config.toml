@@ -1,7 +1,9 @@
 [alias]
 # Keep CI/local commands consistent and cross-platform.
 lint = "clippy --workspace --all-targets --all-features -- -D warnings"
+lintlocked = "clippy --locked --workspace --all-targets --all-features -- -D warnings"
 fmtcheck = "fmt --all --check"
 fmtall = "fmt --all"
-testall = "test --workspace"
-buildall = "build --workspace"
+testall = "test --workspace --all-targets --all-features"
+buildall = "build --workspace --all-targets --all-features"
+docall = "doc --workspace --all-features --no-deps"

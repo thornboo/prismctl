@@ -170,32 +170,30 @@ impl ChangeSet {
                     // Intentionally do nothing other than allow the caller to print `Change`.
                     let _ = change;
                 }
-                ApplyMode::Apply => {
-                    match change {
-                        Change::CreateDirAll { path } => fs
-                            .create_dir_all(path)
-                            .map_err(|e| format!("创建目录失败: {}: {}", path.display(), e))?,
-                        Change::RemoveDirAll { path } => fs
-                            .remove_dir_all(path)
-                            .map_err(|e| format!("删除目录失败: {}: {}", path.display(), e))?,
-                        Change::WriteFile {
-                            path,
-                            bytes,
-                            overwrite,
-                        } => fs
-                            .write_file(path, bytes, *overwrite)
-                            .map_err(|e| format!("写入文件失败: {}: {}", path.display(), e))?,
-                        Change::RunCommand {
-                            program,
-                            args,
-                            cwd,
-                            env,
-                        } => runner
-                            .run(program, args, cwd.as_deref(), env)
-                            .map(|_| ())
-                            .map_err(|e| format!("执行命令失败: {}: {}", program, e))?,
-                    }
-                }
+                ApplyMode::Apply => match change {
+                    Change::CreateDirAll { path } => fs
+                        .create_dir_all(path)
+                        .map_err(|e| format!("创建目录失败: {}: {}", path.display(), e))?,
+                    Change::RemoveDirAll { path } => fs
+                        .remove_dir_all(path)
+                        .map_err(|e| format!("删除目录失败: {}: {}", path.display(), e))?,
+                    Change::WriteFile {
+                        path,
+                        bytes,
+                        overwrite,
+                    } => fs
+                        .write_file(path, bytes, *overwrite)
+                        .map_err(|e| format!("写入文件失败: {}: {}", path.display(), e))?,
+                    Change::RunCommand {
+                        program,
+                        args,
+                        cwd,
+                        env,
+                    } => runner
+                        .run(program, args, cwd.as_deref(), env)
+                        .map(|_| ())
+                        .map_err(|e| format!("执行命令失败: {}: {}", program, e))?,
+                },
             }
         }
 

@@ -152,10 +152,18 @@ pub fn cmd_doctor(mut args: Vec<String>) -> Result<(), String> {
     let exists_word = |b: bool| -> &'static str {
         match prismctl_i18n::current_locale() {
             prismctl_i18n::Locale::ZhCN => {
-                if b { "存在" } else { "不存在" }
+                if b {
+                    "存在"
+                } else {
+                    "不存在"
+                }
             }
             prismctl_i18n::Locale::En => {
-                if b { "yes" } else { "no" }
+                if b {
+                    "yes"
+                } else {
+                    "no"
+                }
             }
         }
     };
@@ -195,9 +203,18 @@ pub fn cmd_doctor(mut args: Vec<String>) -> Result<(), String> {
         exists_word(claude_settings.exists())
     );
     println!("  - ~/.claude.json: {}", exists_word(claude_json.exists()));
-    println!("  - ~/.codex/config.toml: {}", exists_word(codex_config.exists()));
-    println!("  - ~/.codex/auth.json: {}", exists_word(codex_auth.exists()));
-    println!("  - ~/.codex/AGENTS.md: {}", exists_word(codex_agents.exists()));
+    println!(
+        "  - ~/.codex/config.toml: {}",
+        exists_word(codex_config.exists())
+    );
+    println!(
+        "  - ~/.codex/auth.json: {}",
+        exists_word(codex_auth.exists())
+    );
+    println!(
+        "  - ~/.codex/AGENTS.md: {}",
+        exists_word(codex_agents.exists())
+    );
     println!("  - ~/.gemini/.env: {}", exists_word(gemini_env.exists()));
     println!(
         "  - ~/.gemini/settings.json: {}",
@@ -461,15 +478,22 @@ fn cmd_claude_mcp_list(mut args: Vec<String>) -> Result<(), String> {
 
     // Listing is read-only; we run it immediately (no ChangeSet).
     let envs = vec![
-        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
-        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+        (
+            "HOME".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
+        (
+            "USERPROFILE".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
     ];
     let mut cmd = std::process::Command::new("claude");
     cmd.args(["mcp", "list"]).envs(envs);
     if let Some(cwd) = project_path {
         cmd.current_dir(cwd);
     }
-    let status = cmd.status()
+    let status = cmd
+        .status()
         .map_err(|e| format!("执行命令失败: claude: {}", e))?;
     if !status.success() {
         return Err(format!("claude mcp list 失败（exit={}）", status));
@@ -521,9 +545,9 @@ fn parse_claude_mcp_scope(args: &mut Vec<String>) -> Result<ClaudeMcpScope, Stri
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--scope" {
-            let v = args
-                .get(i + 1)
-                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let v = args.get(i + 1).ok_or_else(|| {
+                crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope"))
+            })?;
             let scope = match v.as_str() {
                 "local" => ClaudeMcpScope::Local,
                 "project" => ClaudeMcpScope::Project,
@@ -556,8 +580,8 @@ fn cmd_claude_mcp_add(mut args: Vec<String>) -> Result<(), String> {
     }
 
     let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
-    let cs =
-        mcp::plan_claude_mcp_add(&home, scope, &name, project_path).map_err(crate::errors::usage)?;
+    let cs = mcp::plan_claude_mcp_add(&home, scope, &name, project_path)
+        .map_err(crate::errors::usage)?;
 
     let title = tf!(keys::CHANGESET_PREVIEW_TITLE, "mode" => format!("{:?}", mode));
     println!("{}", title);
@@ -591,8 +615,14 @@ fn cmd_claude_mcp_get(mut args: Vec<String>) -> Result<(), String> {
 
     let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
     let envs = vec![
-        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
-        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+        (
+            "HOME".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
+        (
+            "USERPROFILE".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
     ];
     let mut cmd = std::process::Command::new("claude");
     cmd.args(["mcp", "get", &name]).envs(envs);
@@ -1216,9 +1246,9 @@ fn parse_codex_agent_scope(args: &mut Vec<String>) -> Result<CodexAgentScope, St
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--scope" {
-            let v = args
-                .get(i + 1)
-                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let v = args.get(i + 1).ok_or_else(|| {
+                crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope"))
+            })?;
             let scope = match v.as_str() {
                 "user" => CodexAgentScope::User,
                 "project" => CodexAgentScope::Project,
@@ -1258,12 +1288,17 @@ fn cmd_codex_agent_use(mut args: Vec<String>) -> Result<(), String> {
     let (agents_path, backup_base_dir) = match scope {
         CodexAgentScope::User => {
             let codex_root = home.tool_root(Tool::Codex);
-            (codex_root.join("AGENTS.md"), codex_root.join("backup").join("prismctl"))
+            (
+                codex_root.join("AGENTS.md"),
+                codex_root.join("backup").join("prismctl"),
+            )
         }
         CodexAgentScope::Project => {
             let root = match project_path {
                 Some(p) => normalize_path(&p),
-                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+                None => {
+                    env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?
+                }
             };
             (
                 root.join("AGENTS.md"),
@@ -1798,13 +1833,15 @@ fn cmd_gemini_mcp(mut args: Vec<String>) -> Result<(), String> {
     }
 }
 
-fn parse_gemini_mcp_scope(args: &mut Vec<String>) -> Result<prismctl_core::mcp::GeminiMcpScope, String> {
+fn parse_gemini_mcp_scope(
+    args: &mut Vec<String>,
+) -> Result<prismctl_core::mcp::GeminiMcpScope, String> {
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--scope" {
-            let v = args
-                .get(i + 1)
-                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let v = args.get(i + 1).ok_or_else(|| {
+                crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope"))
+            })?;
             let scope = match v.as_str() {
                 "project" => prismctl_core::mcp::GeminiMcpScope::Project,
                 "user" => prismctl_core::mcp::GeminiMcpScope::User,
@@ -1834,9 +1871,9 @@ fn parse_gemini_scope(args: &mut Vec<String>) -> Result<GeminiScope, String> {
     let mut i = 0;
     while i < args.len() {
         if args[i] == "--scope" {
-            let v = args
-                .get(i + 1)
-                .ok_or_else(|| crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope")))?;
+            let v = args.get(i + 1).ok_or_else(|| {
+                crate::errors::usage(tf!(keys::ERROR_FLAG_MISSING_VALUE, "flag" => "--scope"))
+            })?;
             let scope = match v.as_str() {
                 "user" => GeminiScope::User,
                 "project" => GeminiScope::Project,
@@ -1901,7 +1938,9 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
         GeminiScope::Project => {
             let root = match project_path {
                 Some(p) => normalize_path(&p),
-                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+                None => {
+                    env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?
+                }
             };
             let dir = root.join(".gemini");
             (dir.clone(), dir.join(".env"))
@@ -1921,9 +1960,7 @@ fn cmd_gemini_env_set(mut args: Vec<String>) -> Result<(), String> {
     let block = format_env_block(&kv);
     let next = upsert_managed_block(&existing, start_marker, end_marker, &block);
     let mut cs = ChangeSet::new();
-    cs.push(Change::CreateDirAll {
-        path: gemini_dir,
-    });
+    cs.push(Change::CreateDirAll { path: gemini_dir });
     cs.push(Change::WriteFile {
         path: env_path,
         bytes: next.into_bytes(),
@@ -1997,7 +2034,9 @@ fn cmd_gemini_settings_set(mut args: Vec<String>) -> Result<(), String> {
         GeminiScope::Project => {
             let root = match project_path {
                 Some(p) => normalize_path(&p),
-                None => env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?,
+                None => {
+                    env::current_dir().map_err(|e| tf!(keys::ERROR_CURRENT_DIR, "error" => e))?
+                }
             };
             let dir = root.join(".gemini");
             (dir.clone(), dir.join("settings.json"))
@@ -2043,8 +2082,14 @@ fn cmd_gemini_mcp_list(mut args: Vec<String>) -> Result<(), String> {
 
     let home = PrismctlHome::discover(home).map_err(crate::errors::usage)?;
     let envs = vec![
-        ("HOME".to_string(), home.home_dir().to_string_lossy().to_string()),
-        ("USERPROFILE".to_string(), home.home_dir().to_string_lossy().to_string()),
+        (
+            "HOME".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
+        (
+            "USERPROFILE".to_string(),
+            home.home_dir().to_string_lossy().to_string(),
+        ),
     ];
     let mut cmd = std::process::Command::new("gemini");
     cmd.args(["mcp", "list", "--scope", scope.as_flag_value()])
