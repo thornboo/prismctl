@@ -1,0 +1,7 @@
+[alias]
+# Keep CI/local commands consistent and cross-platform.
+lint = "clippy --workspace --all-targets --all-features -- -D warnings"
+fmtcheck = "fmt --all --check"
+fmtall = "fmt --all"
+testall = "test --workspace"
+buildall = "build --workspace"

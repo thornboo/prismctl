@@ -14,13 +14,13 @@ Thanks for your interest in Ekko! This repository is a Rust workspace with:
 
 ```bash
 # Format
-cargo fmt --all
+cargo fmtall
 
 # Lint (must be zero warnings)
-cargo clippy -- -D warnings
+cargo lint
 
 # Tests
-cargo test --all
+cargo testall
 
 # Run locally
 cargo run -p ekko -- --help
